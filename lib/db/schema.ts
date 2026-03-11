@@ -1,7 +1,22 @@
 import {
   pgTable, text, boolean, timestamp, integer,
-  jsonb, uuid, index
+  jsonb, uuid, index, customType
 } from 'drizzle-orm/pg-core'
+
+const vector = customType<{ data: number[]; driverData: string }>({
+  dataType() {
+    return 'vector(1536)'
+  },
+  toDriver(value: number[]): string {
+    return JSON.stringify(value)
+  },
+  fromDriver(value: string): number[] {
+    if (typeof value === 'string') {
+      return JSON.parse(value.replace('[', '[').replace(']', ']'))
+    }
+    return value as unknown as number[]
+  },
+})
 
 // ─── ORGANIZATIONS ───────────────────────────────────────────
 
@@ -57,6 +72,7 @@ export const orgs = pgTable('orgs', {
 export const org_embeddings = pgTable('org_embeddings', {
   id:         uuid('id').primaryKey().defaultRandom(),
   org_id:     uuid('org_id').references(() => orgs.id).notNull(),
+  embedding:  vector('embedding').notNull(),
   model:      text('model').default('claude'),
   created_at: timestamp('created_at').defaultNow(),
 })
