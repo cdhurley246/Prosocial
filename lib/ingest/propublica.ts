@@ -14,18 +14,30 @@ export interface ProPublicaOrg {
   filing_requirement_code: string
 }
 
-export async function fetchNonprofitsByStateAndNTEE(
+// NOTE: ProPublica's ntee[id] filter is currently broken (returns 500).
+// We fetch by state only and filter NTEE codes in code.
+export async function fetchNonprofitsByState(
   state: string,
-  nteeCode: string,
   page = 0
 ): Promise<ProPublicaOrg[]> {
-  const url = `${PROPUBLICA_BASE}/search.json?state[id]=${state}&ntee[id]=${nteeCode}&c_code[id]=3&page=${page}`
+  const url = `${PROPUBLICA_BASE}/search.json?q=&state%5Bid%5D=${state}&page=${page}`
 
   const res = await fetch(url)
   if (!res.ok) throw new Error(`ProPublica fetch failed: ${res.status}`)
 
-  const data = await res.json()
+  const text = await res.text()
+  if (!text) return []
+  const data = JSON.parse(text)
   return data.organizations || []
+}
+
+// Keep old signature as alias for compatibility
+export async function fetchNonprofitsByStateAndNTEE(
+  state: string,
+  _nteeCode: string,
+  page = 0
+): Promise<ProPublicaOrg[]> {
+  return fetchNonprofitsByState(state, page)
 }
 
 export async function fetchOrgDetails(ein: string) {
