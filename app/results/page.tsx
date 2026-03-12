@@ -195,42 +195,52 @@ function ResultsContent() {
           <div className="error-state">{error}</div>
         )}
 
-        {!loading && !error && results.map(org => (
-          <div key={org.id} className="result-card">
-            <div>
-              <div className="result-name">
-                {org.website ? (
-                  <a href={org.website} target="_blank" rel="noopener noreferrer">
-                    {org.name}
-                  </a>
-                ) : org.name}
-              </div>
-              {(org.mission || org.description) && (
-                <p className="result-mission">
-                  {(org.mission || org.description || '').slice(0, 200)}
-                  {(org.mission || org.description || '').length > 200 ? '…' : ''}
-                </p>
-              )}
-              <div className="result-meta">
-                {org.org_types?.map(t => (
-                  <span key={t} className="tag tag-green">{t}</span>
-                ))}
-                {org.issue_areas?.map(a => (
-                  <span key={a} className="tag tag-red">{a}</span>
-                ))}
-                {(org.city || org.state) && (
-                  <span className="result-location">
-                    {[org.city, org.state].filter(Boolean).join(', ')}
-                  </span>
+        {!loading && !error && (() => {
+          // Min-max normalize scores so the spread is legible
+          const scores = results.map(r => r.similarity)
+          const minS = Math.min(...scores)
+          const maxS = Math.max(...scores)
+          const range = maxS - minS
+
+          const normalize = (s: number) => {
+            if (range < 0.001) return 95 // all identical — show 95%
+            // Map to 65–100 range so even last place shows a reasonable score
+            return Math.round(65 + ((s - minS) / range) * 35)
+          }
+
+          return results.map(org => (
+            <div key={org.id} className="result-card">
+              <div>
+                <div className="result-name">
+                  <Link href={`/orgs/${org.slug}`}>{org.name}</Link>
+                </div>
+                {(org.mission || org.description) && (
+                  <p className="result-mission">
+                    {(org.mission || org.description || '').slice(0, 200)}
+                    {(org.mission || org.description || '').length > 200 ? '…' : ''}
+                  </p>
                 )}
+                <div className="result-meta">
+                  {org.org_types?.map(t => (
+                    <span key={t} className="tag tag-green">{t}</span>
+                  ))}
+                  {org.issue_areas?.map(a => (
+                    <span key={a} className="tag tag-red">{a}</span>
+                  ))}
+                  {(org.city || org.state) && (
+                    <span className="result-location">
+                      {[org.city, org.state].filter(Boolean).join(', ')}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div className="match-badge">
+                <div className="match-pct">{normalize(org.similarity)}%</div>
+                <div className="match-lbl">Match</div>
               </div>
             </div>
-            <div className="match-badge">
-              <div className="match-pct">{Math.round(org.similarity * 100)}%</div>
-              <div className="match-lbl">Match</div>
-            </div>
-          </div>
-        ))}
+          ))
+        })()}
       </main>
     </div>
   )
