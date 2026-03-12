@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "ingest": "tsx --env-file .env.local scripts/ingest-nonprofits.ts",
+    "enrich": "tsx --env-file .env.local scripts/enrich-orgs.ts",
     "embed": "tsx --env-file .env.local scripts/generate-embeddings.ts",
     "studio": "drizzle-kit studio"
   },
