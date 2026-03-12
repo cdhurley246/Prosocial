@@ -209,11 +209,9 @@ function ResultsContent() {
           }
 
           return results.map(org => (
-            <div key={org.id} className="result-card">
+            <Link key={org.id} href={`/orgs/${org.slug}`} className="result-card">
               <div>
-                <div className="result-name">
-                  <Link href={`/orgs/${org.slug}`}>{org.name}</Link>
-                </div>
+                <div className="result-name">{org.name}</div>
                 {(org.mission || org.description) && (
                   <p className="result-mission">
                     {(org.mission || org.description || '').slice(0, 200)}
@@ -238,7 +236,7 @@ function ResultsContent() {
                 <div className="match-pct">{normalize(org.similarity)}%</div>
                 <div className="match-lbl">Match</div>
               </div>
-            </div>
+            </Link>
           ))
         })()}
       </main>

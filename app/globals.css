@@ -596,6 +596,11 @@ body::after {
 }
 
 /* ── RESULT CARDS ── */
+a.result-card {
+  text-decoration: none;
+  color: inherit;
+}
+
 .result-card {
   border: 1px solid var(--rule);
   border-radius: 4px;
@@ -1241,12 +1246,44 @@ body::after {
 }
 
 .org-empty {
-  padding: 3rem 0;
+  padding: 2rem 0;
+}
+
+.org-empty-notice {
+  background: var(--warm);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 1.75rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.org-empty-heading {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+
+.org-empty-notice p {
+  font-size: 0.88rem;
+  line-height: 1.75;
   color: var(--muted);
-  font-size: 0.9rem;
-  line-height: 2;
   font-weight: 300;
 }
+
+.org-propublica-link {
+  display: inline-flex;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--red);
+  text-decoration: none;
+  letter-spacing: 0.02em;
+}
+
+.org-propublica-link:hover { text-decoration: underline; }
 
 .org-website-inline {
   color: var(--red);
@@ -1314,6 +1351,36 @@ body::after {
 }
 
 .org-meta-link:hover { text-decoration: underline; }
+
+.org-propublica-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  background: var(--ink);
+  border-radius: 4px;
+  padding: 1.25rem;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+
+.org-propublica-card:hover {
+  opacity: 0.9;
+}
+
+.org-propublica-label {
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--sage);
+}
+
+.org-propublica-cta {
+  font-size: 0.82rem;
+  color: var(--cream);
+  font-weight: 400;
+  line-height: 1.4;
+}
 
 .org-disclaimer {
   font-size: 0.73rem;

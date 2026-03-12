@@ -12,10 +12,47 @@ interface Document {
   notable_clauses: string[] | null
 }
 
+// NTEE major group descriptions
+const NTEE_GROUPS: Record<string, string> = {
+  A: 'Arts, Culture & Humanities',
+  B: 'Education',
+  C: 'Environmental Quality & Protection',
+  D: 'Animal Related',
+  E: 'Health Care',
+  F: 'Mental Health & Crisis Intervention',
+  G: 'Diseases, Disorders & Medical Research',
+  H: 'Medical Research',
+  I: 'Crime & Legal Services',
+  J: 'Employment',
+  K: 'Food, Agriculture & Nutrition',
+  L: 'Housing & Shelter',
+  M: 'Public Safety & Disaster Relief',
+  N: 'Recreation & Sports',
+  O: 'Youth Development',
+  P: 'Human Services',
+  Q: 'International & Foreign Affairs',
+  R: 'Civil Rights, Social Action & Advocacy',
+  S: 'Community Improvement & Capacity Building',
+  T: 'Philanthropy & Voluntarism',
+  U: 'Science & Technology',
+  V: 'Social Science',
+  W: 'Public & Societal Benefit',
+  X: 'Religion Related',
+  Y: 'Mutual & Membership Benefit',
+  Z: 'Unknown',
+}
+
+function nteeDescription(code: string | null): string | null {
+  if (!code) return null
+  const major = code[0]?.toUpperCase()
+  return NTEE_GROUPS[major] ?? null
+}
+
 interface Org {
   id: string
   slug: string
   name: string
+  external_id: string | null
   org_types: string[] | null
   ntee_code: string | null
   issue_areas: string[] | null
@@ -76,6 +113,11 @@ export default async function OrgPage({ params }: { params: Promise<{ slug: stri
   const location = [org.city, org.state].filter(Boolean).join(', ')
   const hasMeta = org.founding_year || org.size_staff || org.size_members ||
     org.budget_range || org.legal_structure || org.governance_model
+  const nteeDesc = nteeDescription(org.ntee_code)
+  const propublicaUrl = org.external_id
+    ? `https://projects.propublica.org/nonprofits/organizations/${org.external_id}`
+    : null
+  const hasRichContent = org.mission || org.description || org.documents?.length > 0
 
   return (
     <>
@@ -203,69 +245,114 @@ export default async function OrgPage({ params }: { params: Promise<{ slug: stri
             </section>
           )}
 
-          {!org.mission && !org.description && org.documents.length === 0 && (
+          {!hasRichContent && (
             <div className="org-empty">
-              <p>Detailed information for this organization is not yet available.</p>
-              {org.website && (
+              <div className="org-empty-notice">
+                <p className="org-empty-heading">Profile in progress</p>
                 <p>
-                  <a href={org.website} target="_blank" rel="noopener noreferrer" className="org-website-inline">
+                  We have basic registration data for this organization from IRS public records,
+                  but haven&apos;t yet added a full profile with mission, description, or documents.
+                </p>
+                {propublicaUrl && (
+                  <a
+                    href={propublicaUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="org-propublica-link"
+                  >
+                    View IRS filing history on ProPublica Nonprofit Explorer →
+                  </a>
+                )}
+                {org.website && (
+                  <a href={org.website} target="_blank" rel="noopener noreferrer" className="org-propublica-link">
                     Visit their website →
                   </a>
-                </p>
-              )}
+                )}
+              </div>
             </div>
           )}
         </main>
 
         {/* ── SIDEBAR ── */}
         <aside className="org-sidebar">
-          {hasMeta && (
-            <div className="org-meta-card">
-              <p className="sidebar-label">Organization Details</p>
+          {/* Always show basic IRS data card — we always have ntee_code + org_types */}
+          <div className="org-meta-card">
+            <p className="sidebar-label">Organization Details</p>
 
-              {org.founding_year && (
-                <div className="org-meta-row">
-                  <span className="org-meta-key">Founded</span>
-                  <span className="org-meta-val">{org.founding_year}</span>
-                </div>
-              )}
-              {org.legal_structure && (
-                <div className="org-meta-row">
-                  <span className="org-meta-key">Legal Structure</span>
-                  <span className="org-meta-val">{org.legal_structure}</span>
-                </div>
-              )}
-              {org.governance_model && (
-                <div className="org-meta-row">
-                  <span className="org-meta-key">Governance</span>
-                  <span className="org-meta-val">{org.governance_model}</span>
-                </div>
-              )}
-              {org.size_staff != null && (
-                <div className="org-meta-row">
-                  <span className="org-meta-key">Staff</span>
-                  <span className="org-meta-val">{org.size_staff}</span>
-                </div>
-              )}
-              {org.size_members != null && (
-                <div className="org-meta-row">
-                  <span className="org-meta-key">Members</span>
-                  <span className="org-meta-val">{org.size_members.toLocaleString()}</span>
-                </div>
-              )}
-              {org.budget_range && (
-                <div className="org-meta-row">
-                  <span className="org-meta-key">Budget Range</span>
-                  <span className="org-meta-val">{org.budget_range}</span>
-                </div>
-              )}
-              {org.ntee_code && (
+            {org.org_types && org.org_types.length > 0 && (
+              <div className="org-meta-row">
+                <span className="org-meta-key">Type</span>
+                <span className="org-meta-val">{org.org_types.map(t => t.replace(/_/g, ' ')).join(', ')}</span>
+              </div>
+            )}
+            {org.ntee_code && (
+              <>
                 <div className="org-meta-row">
                   <span className="org-meta-key">NTEE Code</span>
                   <span className="org-meta-val org-meta-mono">{org.ntee_code}</span>
                 </div>
-              )}
-            </div>
+                {nteeDesc && (
+                  <div className="org-meta-row">
+                    <span className="org-meta-key">Sector</span>
+                    <span className="org-meta-val">{nteeDesc}</span>
+                  </div>
+                )}
+              </>
+            )}
+            {org.founding_year && (
+              <div className="org-meta-row">
+                <span className="org-meta-key">Founded</span>
+                <span className="org-meta-val">{org.founding_year}</span>
+              </div>
+            )}
+            {org.legal_structure && (
+              <div className="org-meta-row">
+                <span className="org-meta-key">Legal Structure</span>
+                <span className="org-meta-val">{org.legal_structure}</span>
+              </div>
+            )}
+            {org.governance_model && (
+              <div className="org-meta-row">
+                <span className="org-meta-key">Governance</span>
+                <span className="org-meta-val">{org.governance_model}</span>
+              </div>
+            )}
+            {org.size_staff != null && (
+              <div className="org-meta-row">
+                <span className="org-meta-key">Staff</span>
+                <span className="org-meta-val">{org.size_staff}</span>
+              </div>
+            )}
+            {org.size_members != null && (
+              <div className="org-meta-row">
+                <span className="org-meta-key">Members</span>
+                <span className="org-meta-val">{org.size_members.toLocaleString()}</span>
+              </div>
+            )}
+            {org.budget_range && (
+              <div className="org-meta-row">
+                <span className="org-meta-key">Budget Range</span>
+                <span className="org-meta-val">{org.budget_range}</span>
+              </div>
+            )}
+            {location && (
+              <div className="org-meta-row">
+                <span className="org-meta-key">Location</span>
+                <span className="org-meta-val">{location}</span>
+              </div>
+            )}
+          </div>
+
+          {propublicaUrl && (
+            <a
+              href={propublicaUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="org-propublica-card"
+            >
+              <span className="org-propublica-label">IRS Filing History</span>
+              <span className="org-propublica-cta">View on ProPublica Nonprofit Explorer →</span>
+            </a>
           )}
 
           {(org.email || org.phone || org.county) && (
