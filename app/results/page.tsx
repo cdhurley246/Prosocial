@@ -206,9 +206,9 @@ export default function ResultsPage() {
           Pro<span>social</span>
         </Link>
         <ul className="nav-links">
-          <li><a href="#">Organizations</a></li>
+          <li><a href="#">Browse</a></li>
           <li><a href="#">Resources</a></li>
-          <li><a href="#">About</a></li>
+          <li><a href="/about">About</a></li>
         </ul>
         <a href="#" className="nav-cta">Clinic Login →</a>
       </nav>

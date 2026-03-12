@@ -56,6 +56,12 @@ export default function Home() {
       })
 
       const data = await res.json()
+
+      if (data.error) {
+        setMessages([...newMessages, { role: 'assistant', content: `Something went wrong: ${data.error}` }])
+        return
+      }
+
       setMessages([...newMessages, { role: 'assistant', content: data.message }])
 
       if (data.profile) {
@@ -78,9 +84,9 @@ export default function Home() {
           Pro<span>social</span>
         </a>
         <ul className="nav-links">
-          <li><a href="#">Organizations</a></li>
+          <li><a href="#">Browse</a></li>
           <li><a href="#">Resources</a></li>
-          <li><a href="#">About</a></li>
+          <li><a href="/about">About</a></li>
         </ul>
         <a href="#" className="nav-cta">Clinic Login →</a>
       </nav>
@@ -198,6 +204,17 @@ export default function Home() {
           <p>Leave your knowledge behind — upload your bylaws, share what worked — so the next organization benefits from your experience.</p>
         </div>
       </section>
+
+      <footer className="site-footer">
+        <p className="footer-disclaimer">
+          Nothing on this site constitutes legal advice. Content is provided for informational purposes only.
+          All parties should consult a licensed attorney before taking any significant steps, including signing paperwork or forming a legal entity.
+          For low-cost legal assistance, contact the{' '}
+          <a href="https://law.wustl.edu/clinics/entrepreneurship-and-nonprofit-law-clinic/" target="_blank" rel="noopener noreferrer">
+            WashU Entrepreneurship &amp; Nonprofit Law Clinic
+          </a>.
+        </p>
+      </footer>
     </>
   )
 }
