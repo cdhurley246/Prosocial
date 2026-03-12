@@ -6,8 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "ingest": "tsx scripts/ingest-nonprofits.ts",
-    "embed": "tsx scripts/generate-embeddings.ts",
+    "ingest": "tsx --env-file .env.local scripts/ingest-nonprofits.ts",
+    "embed": "tsx --env-file .env.local scripts/generate-embeddings.ts",
     "studio": "drizzle-kit studio"
   },
   "dependencies": {

@@ -1,28 +1,29 @@
 import { NextRequest } from 'next/server'
 import { neon } from '@neondatabase/serverless'
-import Anthropic from '@anthropic-ai/sdk'
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 const sql = neon(process.env.DATABASE_URL!)
 
 async function generateQueryEmbedding(query: string): Promise<number[]> {
-  const response = await anthropic.messages.create({
-    model: 'claude-haiku-4-5-20251001',
-    max_tokens: 64,
-    messages: [{
-      role: 'user',
-      content: `Return ONLY a valid JSON array of exactly 1536 numbers between -1 and 1, representing a semantic embedding of this text. No explanation, no markdown, just the raw JSON array.
-
-Text: "${query.slice(0, 400)}"`
-    }]
+  const response = await fetch('https://api.voyageai.com/v1/embeddings', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${process.env.VOYAGE_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model: 'voyage-large-2',
+      input: [query.slice(0, 4000)],
+      input_type: 'query',
+    }),
   })
 
-  const raw = response.content[0].type === 'text' ? response.content[0].text.trim() : ''
-  try {
-    return JSON.parse(raw)
-  } catch {
-    return new Array(1536).fill(0)
+  if (!response.ok) {
+    const error = await response.text()
+    throw new Error(`Voyage API error ${response.status}: ${error}`)
   }
+
+  const data = await response.json()
+  return data.data[0].embedding
 }
 
 export async function POST(req: NextRequest) {
@@ -36,7 +37,6 @@ export async function POST(req: NextRequest) {
     const embedding = await generateQueryEmbedding(query)
     const embeddingStr = JSON.stringify(embedding)
 
-    // Vector similarity search using pgvector cosine distance
     const results = await sql`
       SELECT
         o.id,
