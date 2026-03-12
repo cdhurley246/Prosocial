@@ -88,8 +88,20 @@ body::after {
   color: var(--ink);
 }
 
-.nav-cta {
+.nav-disclaimer {
   margin-left: auto;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--red);
+  letter-spacing: 0.02em;
+  padding: 0 1.5rem;
+  text-align: center;
+  line-height: 1.35;
+  max-width: 280px;
+}
+
+.nav-cta {
+  margin-left: 0;
   display: flex;
   align-items: center;
   font-size: 0.78rem;

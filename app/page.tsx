@@ -91,6 +91,7 @@ export default function Home() {
           <li><a href="#">Resources</a></li>
           <li><a href="/about">About</a></li>
         </ul>
+        <p className="nav-disclaimer">Nothing on this page constitutes legal advice — please consult a lawyer</p>
         <a href="#" className="nav-cta">Clinic Login →</a>
       </nav>
 
