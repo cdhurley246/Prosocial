@@ -1,6 +1,6 @@
 'use client'
 import { useState, useRef, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 interface Message {
   role: 'user' | 'assistant'
@@ -18,14 +18,14 @@ const CHIPS = [
 
 const INITIAL_MESSAGE: Message = {
   role: 'assistant',
-  content: "Hello! Tell me about the organization you're building or trying to start. What's your mission, and what kind of help are you looking for?",
+  content: "Tell me about the organization you're building or trying to start — what's your mission, and what kind of help are you looking for?",
 }
 
 export default function Home() {
-  const router = useRouter()
   const [messages, setMessages] = useState<Message[]>([INITIAL_MESSAGE])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
+  const [matchUrl, setMatchUrl] = useState<string | null>(null)
   const chatRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -35,7 +35,7 @@ export default function Home() {
   }, [messages, loading])
 
   async function sendMessage() {
-    if (!input.trim() || loading) return
+    if (!input.trim() || loading || matchUrl) return
 
     const newMessages: Message[] = [
       ...messages,
@@ -45,7 +45,7 @@ export default function Home() {
     setInput('')
     setLoading(true)
 
-    // Exclude the pre-seeded greeting from the API payload — only send real conversation turns
+    // Exclude the pre-seeded greeting from the API payload
     const apiMessages = newMessages.filter(m => !(m.role === 'assistant' && m === INITIAL_MESSAGE))
 
     try {
@@ -62,13 +62,16 @@ export default function Home() {
         return
       }
 
-      setMessages([...newMessages, { role: 'assistant', content: data.message }])
+      const finalMessages = [...newMessages, { role: 'assistant' as const, content: data.message }]
+      setMessages(finalMessages)
 
       if (data.profile) {
         const params = new URLSearchParams()
         params.set('q', data.profile.search_query)
         params.set('profile', JSON.stringify(data.profile))
-        router.push(`/results?${params.toString()}`)
+        // Save chat history so results page can show it
+        sessionStorage.setItem('chatMessages', JSON.stringify(finalMessages))
+        setMatchUrl(`/results?${params.toString()}`)
       }
     } catch (err) {
       console.error(err)
@@ -132,17 +135,19 @@ export default function Home() {
             similar organizations, relevant bylaws, and resources.
           </p>
 
-          <div className="chips">
-            {CHIPS.map(chip => (
-              <button
-                key={chip}
-                className="chip"
-                onClick={() => setInput(chip)}
-              >
-                {chip}
-              </button>
-            ))}
-          </div>
+          {!matchUrl && (
+            <div className="chips">
+              {CHIPS.map(chip => (
+                <button
+                  key={chip}
+                  className="chip"
+                  onClick={() => setInput(chip)}
+                >
+                  {chip}
+                </button>
+              ))}
+            </div>
+          )}
 
           <div className="chat-window" ref={chatRef}>
             {messages.map((m, i) => (
@@ -161,29 +166,38 @@ export default function Home() {
             )}
           </div>
 
-          <div className="chat-input-row">
-            <input
-              className="chat-input"
-              type="text"
-              placeholder="Continue the conversation…"
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              onKeyDown={e => {
-                if (e.key === 'Enter') {
-                  e.preventDefault()
-                  sendMessage()
-                }
-              }}
-              disabled={loading}
-            />
-            <button
-              className="chat-send"
-              onClick={sendMessage}
-              disabled={loading}
-            >
-              {loading ? '…' : 'Send'}
-            </button>
-          </div>
+          {matchUrl ? (
+            <div className="match-ready">
+              <p className="match-ready-label">Your matches are ready</p>
+              <Link href={matchUrl} className="match-ready-btn">
+                View similar organizations →
+              </Link>
+            </div>
+          ) : (
+            <div className="chat-input-row">
+              <input
+                className="chat-input"
+                type="text"
+                placeholder="Continue the conversation…"
+                value={input}
+                onChange={e => setInput(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault()
+                    sendMessage()
+                  }
+                }}
+                disabled={loading}
+              />
+              <button
+                className="chat-send"
+                onClick={sendMessage}
+                disabled={loading}
+              >
+                {loading ? '…' : 'Send'}
+              </button>
+            </div>
+          )}
         </div>
       </section>
 

@@ -27,6 +27,11 @@ interface Profile {
   search_query?: string
 }
 
+interface Message {
+  role: 'user' | 'assistant'
+  content: string
+}
+
 function ResultsContent() {
   const searchParams = useSearchParams()
   const query = searchParams.get('q') || ''
@@ -40,6 +45,15 @@ function ResultsContent() {
   const [results, setResults] = useState<OrgResult[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [chatMessages, setChatMessages] = useState<Message[]>([])
+  const [chatOpen, setChatOpen] = useState(false)
+
+  useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem('chatMessages')
+      if (saved) setChatMessages(JSON.parse(saved))
+    } catch {}
+  }, [])
 
   useEffect(() => {
     if (!query) {
@@ -139,6 +153,30 @@ function ResultsContent() {
             </label>
           </div>
         </div>
+
+        {chatMessages.length > 0 && (
+          <div className="chat-history">
+            <button
+              className="chat-history-toggle"
+              onClick={() => setChatOpen(o => !o)}
+            >
+              <span>Intake Conversation</span>
+              <span className="chat-history-arrow">{chatOpen ? '▲' : '▼'}</span>
+            </button>
+            {chatOpen && (
+              <div className="chat-history-body">
+                {chatMessages.map((m, i) => (
+                  <div key={i} className="chat-history-msg">
+                    <span className={`chat-msg-label ${m.role === 'user' ? 'user' : 'ai'}`}>
+                      {m.role === 'user' ? 'You' : 'Prosocial'}
+                    </span>
+                    <p className="chat-history-text">{m.content}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </aside>
 
       <main className="results-main">
