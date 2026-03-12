@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
 interface Message {
@@ -7,19 +7,39 @@ interface Message {
   content: string
 }
 
+const CHIPS = [
+  'Starting a co-op',
+  'Nonprofit bylaws',
+  'Finding funders',
+  'Governance help',
+  'Worker ownership',
+  'Housing co-op',
+]
+
+const INITIAL_MESSAGE: Message = {
+  role: 'assistant',
+  content: "Hello! Tell me about the organization you're building or trying to start. What's your mission, and what kind of help are you looking for?",
+}
+
 export default function Home() {
   const router = useRouter()
-  const [messages, setMessages] = useState<Message[]>([])
+  const [messages, setMessages] = useState<Message[]>([INITIAL_MESSAGE])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
-  const [profile, setProfile] = useState<any>(null)
+  const chatRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (chatRef.current) {
+      chatRef.current.scrollTop = chatRef.current.scrollHeight
+    }
+  }, [messages, loading])
 
   async function sendMessage() {
     if (!input.trim() || loading) return
 
     const newMessages: Message[] = [
       ...messages,
-      { role: 'user', content: input }
+      { role: 'user', content: input },
     ]
     setMessages(newMessages)
     setInput('')
@@ -36,10 +56,10 @@ export default function Home() {
       setMessages([...newMessages, { role: 'assistant', content: data.message }])
 
       if (data.profile) {
-        setProfile(data.profile)
-        // Automatically redirect to results once a profile is extracted
-        const query = encodeURIComponent(data.profile.search_query)
-        router.push(`/results?q=${query}`)
+        const params = new URLSearchParams()
+        params.set('q', data.profile.search_query)
+        params.set('profile', JSON.stringify(data.profile))
+        router.push(`/results?${params.toString()}`)
       }
     } catch (err) {
       console.error(err)
@@ -49,66 +69,132 @@ export default function Home() {
   }
 
   return (
-    <main style={{ maxWidth: 700, margin: '60px auto', padding: '0 20px', fontFamily: 'sans-serif' }}>
-      <h1 style={{ fontSize: '2rem', marginBottom: 8, color: '#a51417' }}>Prosocial</h1>
-      <p style={{ color: '#666', marginBottom: 32 }}>
-        A resource platform for nonprofits and co-ops in the St. Louis region.
-        Describe your organization and we&apos;ll find similar ones.
-      </p>
+    <>
+      <nav className="nav">
+        <a href="/" className="nav-logo">
+          Pro<span>social</span>
+        </a>
+        <ul className="nav-links">
+          <li><a href="#">Organizations</a></li>
+          <li><a href="#">Resources</a></li>
+          <li><a href="#">About</a></li>
+        </ul>
+        <a href="#" className="nav-cta">Clinic Login →</a>
+      </nav>
 
-      <div style={{
-        border: '1px solid #ddd', borderRadius: 8, padding: 20,
-        minHeight: 300, marginBottom: 16, background: 'white'
-      }}>
-        {messages.length === 0 && (
-          <p style={{ color: '#999' }}>
-            Tell us about your organization or what you&apos;re trying to build...
+      <section className="hero">
+        <div className="hero-left">
+          <p className="kicker">St. Louis Cooperative Resource Network</p>
+          <h1 className="hero-title">
+            Building <em>better</em><br />
+            organizations,<br />
+            together.
+          </h1>
+          <p className="hero-body">
+            A shared resource commons for nonprofits, co-ops, and socially-focused organizations
+            across Missouri and Illinois — connecting you with the knowledge, models, and
+            partners you need to succeed.
           </p>
-        )}
-        {messages.map((m, i) => (
-          <div key={i} style={{ marginBottom: 16 }}>
-            <strong style={{ color: m.role === 'user' ? '#1a1a18' : '#a51417' }}>
-              {m.role === 'user' ? 'You' : 'Prosocial'}:
-            </strong>
-            <p style={{ marginTop: 4, whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>{m.content}</p>
+          <div className="stat-strip">
+            <div className="stat">
+              <div className="stat-n">400+</div>
+              <div className="stat-l">Local Orgs</div>
+            </div>
+            <div className="stat">
+              <div className="stat-n">MO &amp; IL</div>
+              <div className="stat-l">Coverage</div>
+            </div>
+            <div className="stat">
+              <div className="stat-n">Free</div>
+              <div className="stat-l">Always</div>
+            </div>
           </div>
-        ))}
-        {loading && <p style={{ color: '#999', fontStyle: 'italic' }}>Finding matches...</p>}
-      </div>
+        </div>
 
-      <div style={{ display: 'flex', gap: 8 }}>
-        <textarea
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={e => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-              e.preventDefault()
-              sendMessage()
-            }
-          }}
-          placeholder="e.g. We're a group of restaurant workers looking to convert to a worker co-op..."
-          style={{
-            flex: 1, padding: 10, borderRadius: 6,
-            border: '1px solid #ddd', resize: 'none', height: 80,
-            fontFamily: 'sans-serif', fontSize: '0.95rem'
-          }}
-        />
-        <button
-          onClick={sendMessage}
-          disabled={loading}
-          style={{
-            padding: '0 20px', background: '#a51417', color: 'white',
-            border: 'none', borderRadius: 6, cursor: loading ? 'not-allowed' : 'pointer',
-            opacity: loading ? 0.7 : 1, fontFamily: 'sans-serif', fontSize: '0.95rem'
-          }}
-        >
-          Send
-        </button>
-      </div>
+        <div className="hero-divider" />
 
-      <p style={{ marginTop: 12, fontSize: '0.8rem', color: '#999' }}>
-        Press Enter to send · Shift+Enter for new line
-      </p>
-    </main>
+        <div className="hero-right">
+          <p className="panel-label">AI-Powered Intake</p>
+          <h2 className="panel-heading">
+            Tell us about your<br />organization
+          </h2>
+          <p className="panel-sub">
+            Describe your mission and what you&apos;re trying to build — we&apos;ll match you with
+            similar organizations, relevant bylaws, and resources.
+          </p>
+
+          <div className="chips">
+            {CHIPS.map(chip => (
+              <button
+                key={chip}
+                className="chip"
+                onClick={() => setInput(chip)}
+              >
+                {chip}
+              </button>
+            ))}
+          </div>
+
+          <div className="chat-window" ref={chatRef}>
+            {messages.map((m, i) => (
+              <div key={i} className="chat-msg">
+                <span className={`chat-msg-label ${m.role === 'user' ? 'user' : 'ai'}`}>
+                  {m.role === 'user' ? 'You' : 'Prosocial'}
+                </span>
+                <p className="chat-msg-text">{m.content}</p>
+              </div>
+            ))}
+            {loading && (
+              <div className="chat-msg">
+                <span className="chat-msg-label ai">Prosocial</span>
+                <p className="chat-msg-text chat-typing">···</p>
+              </div>
+            )}
+          </div>
+
+          <div className="chat-input-row">
+            <input
+              className="chat-input"
+              type="text"
+              placeholder="Continue the conversation…"
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  sendMessage()
+                }
+              }}
+              disabled={loading}
+            />
+            <button
+              className="chat-send"
+              onClick={sendMessage}
+              disabled={loading}
+            >
+              {loading ? '…' : 'Send'}
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section className="how">
+        <div className="how-step">
+          <span className="step-num">01</span>
+          <h3>Describe your situation</h3>
+          <p>Tell us about your organization, your goals, and the challenges you&apos;re facing — in plain language, no legal jargon required.</p>
+        </div>
+        <div className="how-step">
+          <span className="step-num">02</span>
+          <h3>Get matched instantly</h3>
+          <p>Our AI finds similar organizations, relevant documents, and resources from across the St. Louis region that fit your specific context.</p>
+        </div>
+        <div className="how-step">
+          <span className="step-num">03</span>
+          <h3>Pay it forward</h3>
+          <p>Leave your knowledge behind — upload your bylaws, share what worked — so the next organization benefits from your experience.</p>
+        </div>
+      </section>
+    </>
   )
 }

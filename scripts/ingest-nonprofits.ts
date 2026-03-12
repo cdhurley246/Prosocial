@@ -1,6 +1,3 @@
-import { config } from 'dotenv'
-config({ path: '.env.local' })
-
 import { db } from '../lib/db'
 import { orgs } from '../lib/db/schema'
 import { fetchNonprofitsByState, slugify } from '../lib/ingest/propublica'
