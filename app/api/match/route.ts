@@ -1,8 +1,6 @@
 import { NextRequest } from 'next/server'
 import { neon } from '@neondatabase/serverless'
 
-const sql = neon(process.env.DATABASE_URL!)
-
 async function generateQueryEmbedding(query: string): Promise<number[]> {
   const response = await fetch('https://api.voyageai.com/v1/embeddings', {
     method: 'POST',
@@ -34,6 +32,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    const sql = neon(process.env.DATABASE_URL!)
     const embedding = await generateQueryEmbedding(query)
     const embeddingStr = JSON.stringify(embedding)
 
