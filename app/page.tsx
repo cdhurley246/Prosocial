@@ -45,11 +45,14 @@ export default function Home() {
     setInput('')
     setLoading(true)
 
+    // Exclude the pre-seeded greeting from the API payload — only send real conversation turns
+    const apiMessages = newMessages.filter(m => !(m.role === 'assistant' && m === INITIAL_MESSAGE))
+
     try {
       const res = await fetch('/api/intake', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: newMessages }),
+        body: JSON.stringify({ messages: apiMessages }),
       })
 
       const data = await res.json()
