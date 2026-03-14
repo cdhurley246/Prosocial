@@ -92,6 +92,19 @@ export const documents = pgTable('documents', {
   created_at:       timestamp('created_at').defaultNow(),
 })
 
+// ─── DOCUMENT EMBEDDINGS ─────────────────────────────────────
+// Note: table + vector column created via Neon SQL editor:
+// CREATE TABLE doc_embeddings (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), doc_id UUID NOT NULL REFERENCES documents(id), embedding vector(1536), model TEXT DEFAULT 'voyage-large-2', created_at TIMESTAMPTZ DEFAULT NOW());
+// CREATE INDEX ON doc_embeddings USING hnsw (embedding vector_cosine_ops);
+
+export const doc_embeddings = pgTable('doc_embeddings', {
+  id:         uuid('id').primaryKey().defaultRandom(),
+  doc_id:     uuid('doc_id').references(() => documents.id).notNull(),
+  embedding:  vector('embedding').notNull(),
+  model:      text('model').default('voyage-large-2'),
+  created_at: timestamp('created_at').defaultNow(),
+})
+
 // ─── RESOURCES ───────────────────────────────────────────────
 
 export const resources = pgTable('resources', {

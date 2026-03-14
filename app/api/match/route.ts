@@ -67,10 +67,10 @@ export async function POST(req: NextRequest) {
         o.name as source_name
       FROM documents d
       JOIN orgs o ON d.org_id = o.id
+      JOIN doc_embeddings de ON d.id = de.doc_id
       WHERE d.is_public = true
         AND d.deleted_at IS NULL
-        AND d.text_content IS NOT NULL
-        AND d.text_content != ''
+      ORDER BY de.embedding <=> ${embeddingStr}::vector
       LIMIT 4
     `
 
