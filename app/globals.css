@@ -1887,6 +1887,134 @@ a.result-card {
   min-height: 300px;
 }
 
+/* ── BROWSE PAGE ── */
+.browse-layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  min-height: calc(100vh - 56px);
+}
+
+.browse-sidebar {
+  border-right: 1px solid var(--rule);
+  padding: 2.5rem 2rem;
+  position: sticky;
+  top: 56px;
+  height: calc(100vh - 56px);
+  overflow-y: auto;
+}
+
+.browse-alpha {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.75rem;
+}
+
+.browse-alpha-link {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-decoration: none;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2px;
+  transition: color 0.15s, background 0.15s;
+}
+
+.browse-alpha-link:hover {
+  color: var(--ink);
+  background: var(--warm);
+}
+
+.browse-match-cta {
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--red);
+  text-decoration: none;
+  line-height: 1.5;
+  display: block;
+  margin-top: 0.5rem;
+}
+
+.browse-match-cta:hover {
+  text-decoration: underline;
+}
+
+.browse-main {
+  padding: 2.5rem 3rem;
+}
+
+.browse-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.browse-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.browse-group {
+  margin-bottom: 2.5rem;
+  scroll-margin-top: 72px;
+}
+
+.browse-group-label {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: rgba(28,26,23,0.08);
+  line-height: 1;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.browse-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  background: white;
+  text-decoration: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.browse-card:hover {
+  border-color: rgba(165,20,23,0.3);
+  box-shadow: 0 2px 8px rgba(28,26,23,0.05);
+}
+
+.browse-card-body {
+  flex: 1;
+}
+
+.browse-card-arrow {
+  font-size: 0.9rem;
+  color: var(--muted);
+  flex-shrink: 0;
+  transition: color 0.15s;
+}
+
+.browse-card:hover .browse-card-arrow {
+  color: var(--red);
+}
+
 /* ── ANIMATIONS ── */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(16px); }
