@@ -9,7 +9,7 @@ export default function AboutPage() {
         </Link>
         <ul className="nav-links">
           <li><a href="#">Browse</a></li>
-          <li><a href="#">Resources</a></li>
+          <li><a href="/resources">Resources</a></li>
           <li><a href="/about">About</a></li>
         </ul>
         <a href="#" className="nav-cta">Clinic Login →</a>

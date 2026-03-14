@@ -21,7 +21,7 @@ const INITIAL_MESSAGE: Message = {
   content: "Tell me about the organization you're building or trying to start — what's your mission, and what kind of help are you looking for?",
 }
 
-export default function Home() {
+export default function MatchingPage() {
   const [messages, setMessages] = useState<Message[]>([INITIAL_MESSAGE])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
@@ -45,7 +45,6 @@ export default function Home() {
     setInput('')
     setLoading(true)
 
-    // Exclude the pre-seeded greeting from the API payload
     const apiMessages = newMessages.filter(m => !(m.role === 'assistant' && m === INITIAL_MESSAGE))
 
     try {
@@ -69,7 +68,6 @@ export default function Home() {
         const params = new URLSearchParams()
         params.set('q', data.profile.search_query)
         params.set('profile', JSON.stringify(data.profile))
-        // Save chat history so results page can show it
         sessionStorage.setItem('chatMessages', JSON.stringify(finalMessages))
         setMatchUrl(`/results?${params.toString()}`)
       }
@@ -83,9 +81,9 @@ export default function Home() {
   return (
     <>
       <nav className="nav">
-        <a href="/" className="nav-logo">
+        <Link href="/" className="nav-logo">
           Pro<span>social</span>
-        </a>
+        </Link>
         <ul className="nav-links">
           <li><a href="#">Browse</a></li>
           <li><a href="/resources">Resources</a></li>
@@ -95,45 +93,38 @@ export default function Home() {
         <a href="#" className="nav-cta">Clinic Login →</a>
       </nav>
 
-      <section className="hero">
-        <div className="hero-left">
-          <p className="kicker">St. Louis Cooperative Resource Network</p>
-          <h1 className="hero-title">
-            Building <em>better</em><br />
-            organizations,<br />
-            together.
+      <div className="matching-page">
+        <div className="matching-sidebar">
+          <Link href="/resources" className="back-link-light">← Resources</Link>
+          <p className="matching-sidebar-label">AI-Powered Intake</p>
+          <h1 className="matching-sidebar-title">
+            Tell us about your<br />organization
           </h1>
-          <p className="hero-body">
-            A shared resource commons for nonprofits, co-ops, and socially-focused organizations
-            across Missouri and Illinois — connecting you with the knowledge, models, and
-            partners you need to succeed.
+          <p className="matching-sidebar-body">
+            Describe your mission and what you&apos;re trying to build. We&apos;ll match you with
+            similar organizations, relevant bylaws, and resources.
           </p>
-          <div className="stat-strip">
-            <div className="stat">
-              <div className="stat-n">400+</div>
-              <div className="stat-l">Local Orgs</div>
+          <div className="matching-how">
+            <div className="matching-how-step">
+              <span className="matching-step-num">01</span>
+              <p>Describe your situation in plain language</p>
             </div>
-            <div className="stat">
-              <div className="stat-n">MO &amp; IL</div>
-              <div className="stat-l">Coverage</div>
+            <div className="matching-how-step">
+              <span className="matching-step-num">02</span>
+              <p>Get matched with similar organizations</p>
             </div>
-            <div className="stat">
-              <div className="stat-n">Free</div>
-              <div className="stat-l">Always</div>
+            <div className="matching-how-step">
+              <span className="matching-step-num">03</span>
+              <p>Browse relevant documents and resources</p>
             </div>
           </div>
         </div>
 
-        <div className="hero-divider" />
-
-        <div className="hero-right">
-          <p className="panel-label">AI-Powered Intake</p>
-          <h2 className="panel-heading">
-            Tell us about your<br />organization
-          </h2>
+        <div className="matching-chat-panel">
+          <p className="panel-label">Start the conversation</p>
+          <h2 className="panel-heading">What are you building?</h2>
           <p className="panel-sub">
-            Describe your mission and what you&apos;re trying to build — we&apos;ll match you with
-            similar organizations, relevant bylaws, and resources.
+            No jargon required — just describe your situation and goals.
           </p>
 
           {!matchUrl && (
@@ -150,7 +141,7 @@ export default function Home() {
             </div>
           )}
 
-          <div className="chat-window" ref={chatRef}>
+          <div className="chat-window matching-chat-window" ref={chatRef}>
             {messages.map((m, i) => (
               <div key={i} className="chat-msg">
                 <span className={`chat-msg-label ${m.role === 'user' ? 'user' : 'ai'}`}>
@@ -179,7 +170,7 @@ export default function Home() {
               <input
                 className="chat-input"
                 type="text"
-                placeholder="Continue the conversation…"
+                placeholder="Describe your organization…"
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={e => {
@@ -200,36 +191,7 @@ export default function Home() {
             </div>
           )}
         </div>
-      </section>
-
-      <section className="how">
-        <div className="how-step">
-          <span className="step-num">01</span>
-          <h3>Describe your situation</h3>
-          <p>Tell us about your organization, your goals, and the challenges you&apos;re facing — in plain language, no legal jargon required.</p>
-        </div>
-        <div className="how-step">
-          <span className="step-num">02</span>
-          <h3>Get matched instantly</h3>
-          <p>Our AI finds similar organizations, relevant documents, and resources from across the St. Louis region that fit your specific context.</p>
-        </div>
-        <div className="how-step">
-          <span className="step-num">03</span>
-          <h3>Pay it forward</h3>
-          <p>Leave your knowledge behind — upload your bylaws, share what worked — so the next organization benefits from your experience.</p>
-        </div>
-      </section>
-
-      <footer className="site-footer">
-        <p className="footer-disclaimer">
-          Nothing on this site constitutes legal advice. Content is provided for informational purposes only.
-          All parties should consult a licensed attorney before taking any significant steps, including signing paperwork or forming a legal entity.
-          For low-cost legal assistance, contact the{' '}
-          <a href="https://law.wustl.edu/clinics/entrepreneurship-and-nonprofit-law-clinic/" target="_blank" rel="noopener noreferrer">
-            WashU Entrepreneurship &amp; Nonprofit Law Clinic
-          </a>.
-        </p>
-      </footer>
+      </div>
     </>
   )
 }
