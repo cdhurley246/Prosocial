@@ -57,7 +57,24 @@ export async function POST(req: NextRequest) {
       LIMIT ${limit}
     `
 
-    return Response.json({ results })
+    const docResults = await sql`
+      SELECT
+        d.id,
+        d.title,
+        d.doc_type,
+        d.file_url,
+        d.notable_clauses,
+        o.name as source_name
+      FROM documents d
+      JOIN orgs o ON d.org_id = o.id
+      WHERE d.is_public = true
+        AND d.deleted_at IS NULL
+        AND d.text_content IS NOT NULL
+        AND d.text_content != ''
+      LIMIT 4
+    `
+
+    return Response.json({ results, documents: docResults })
   } catch (err) {
     console.error('Match error:', err)
     return Response.json({ error: 'Match failed' }, { status: 500 })

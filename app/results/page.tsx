@@ -18,6 +18,15 @@ interface OrgResult {
   similarity: number
 }
 
+interface DocResult {
+  id: string
+  title: string
+  doc_type: string
+  file_url: string
+  notable_clauses: string[] | null
+  source_name: string
+}
+
 interface Profile {
   org_name?: string | null
   org_types?: string[]
@@ -43,6 +52,7 @@ function ResultsContent() {
   } catch {}
 
   const [results, setResults] = useState<OrgResult[]>([])
+  const [documents, setDocuments] = useState<DocResult[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [chatMessages, setChatMessages] = useState<Message[]>([])
@@ -68,7 +78,10 @@ function ResultsContent() {
       .then(r => r.json())
       .then(data => {
         if (data.error) setError(data.error)
-        else setResults(data.results || [])
+        else {
+          setResults(data.results || [])
+          setDocuments(data.documents || [])
+        }
       })
       .catch(() => setError('Something went wrong'))
       .finally(() => setLoading(false))
@@ -208,36 +221,107 @@ function ResultsContent() {
             return Math.round(65 + ((s - minS) / range) * 35)
           }
 
-          return results.map(org => (
-            <Link key={org.id} href={`/orgs/${org.slug}`} className="result-card">
-              <div>
-                <div className="result-name">{org.name}</div>
-                {(org.mission || org.description) && (
-                  <p className="result-mission">
-                    {(org.mission || org.description || '').slice(0, 200)}
-                    {(org.mission || org.description || '').length > 200 ? '…' : ''}
-                  </p>
-                )}
-                <div className="result-meta">
-                  {org.org_types?.map(t => (
-                    <span key={t} className="tag tag-green">{t}</span>
-                  ))}
-                  {org.issue_areas?.map(a => (
-                    <span key={a} className="tag tag-red">{a}</span>
-                  ))}
-                  {(org.city || org.state) && (
-                    <span className="result-location">
-                      {[org.city, org.state].filter(Boolean).join(', ')}
-                    </span>
-                  )}
+          return (
+            <>
+              {results.map(org => (
+                <Link key={org.id} href={`/orgs/${org.slug}`} className="result-card">
+                  <div>
+                    <div className="result-name">{org.name}</div>
+                    {(org.mission || org.description) && (
+                      <p className="result-mission">
+                        {(org.mission || org.description || '').slice(0, 200)}
+                        {(org.mission || org.description || '').length > 200 ? '…' : ''}
+                      </p>
+                    )}
+                    <div className="result-meta">
+                      {org.org_types?.map(t => (
+                        <span key={t} className="tag tag-green">{t}</span>
+                      ))}
+                      {org.issue_areas?.map(a => (
+                        <span key={a} className="tag tag-red">{a}</span>
+                      ))}
+                      {(org.city || org.state) && (
+                        <span className="result-location">
+                          {[org.city, org.state].filter(Boolean).join(', ')}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="match-badge">
+                    <div className="match-pct">{normalize(org.similarity)}%</div>
+                    <div className="match-lbl">Match</div>
+                  </div>
+                </Link>
+              ))}
+
+              {documents.length > 0 && (
+                <div style={{ marginTop: 40 }}>
+                  <h3 style={{
+                    fontFamily: 'var(--font-display, serif)',
+                    fontSize: '1.1rem',
+                    marginBottom: 16,
+                    paddingBottom: 12,
+                    borderBottom: '1px solid var(--rule)',
+                    color: 'var(--ink)',
+                  }}>
+                    Relevant Documents & Templates
+                  </h3>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    {documents.map(doc => (
+                      <a
+                        key={doc.id}
+                        href={doc.file_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          padding: '14px 18px',
+                          border: '1px solid var(--rule)',
+                          borderRadius: 4,
+                          textDecoration: 'none',
+                          background: 'white',
+                          transition: 'border-color 0.15s, box-shadow 0.15s',
+                        }}
+                        onMouseEnter={e => {
+                          (e.currentTarget as HTMLElement).style.borderColor = 'rgba(165,20,23,0.3)'
+                          ;(e.currentTarget as HTMLElement).style.boxShadow = '0 2px 8px rgba(28,26,23,0.06)'
+                        }}
+                        onMouseLeave={e => {
+                          (e.currentTarget as HTMLElement).style.borderColor = 'var(--rule)'
+                          ;(e.currentTarget as HTMLElement).style.boxShadow = 'none'
+                        }}
+                      >
+                        <div>
+                          <div style={{
+                            fontSize: '0.9rem',
+                            fontWeight: 500,
+                            color: 'var(--ink)',
+                            marginBottom: 3
+                          }}>
+                            {doc.title}
+                          </div>
+                          <div style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>
+                            {doc.source_name} · {doc.doc_type.replace(/_/g, ' ')}
+                          </div>
+                        </div>
+                        <span style={{
+                          fontSize: '0.78rem',
+                          color: 'var(--red)',
+                          marginLeft: 16,
+                          whiteSpace: 'nowrap',
+                          fontWeight: 500,
+                        }}>
+                          View PDF →
+                        </span>
+                      </a>
+                    ))}
+                  </div>
                 </div>
-              </div>
-              <div className="match-badge">
-                <div className="match-pct">{normalize(org.similarity)}%</div>
-                <div className="match-lbl">Match</div>
-              </div>
-            </Link>
-          ))
+              )}
+            </>
+          )
         })()}
       </main>
     </div>
