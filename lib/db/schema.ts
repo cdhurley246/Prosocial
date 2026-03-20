@@ -55,6 +55,9 @@ export const orgs = pgTable('orgs', {
   external_id:      text('external_id'),
   verified:         boolean('verified').default(false),
 
+  // Crawl coverage — null = unchecked, true = found in Common Crawl, false = not found
+  crawl_coverage:   boolean('crawl_coverage'),
+
   // Soft delete + timestamps
   deleted_at:       timestamp('deleted_at'),
   created_at:       timestamp('created_at').defaultNow(),
@@ -141,3 +144,17 @@ export const users = pgTable('users', {
   role:       text('role').default('staff'),
   created_at: timestamp('created_at').defaultNow(),
 })
+
+// ─── CRAWL ENRICHMENTS ───────────────────────────────────────
+// Stores plain text and Claude-extracted structured fields
+// from Common Crawl (WARC) records for each org's website.
+
+export const crawl_enrichments = pgTable('crawl_enrichments', {
+  id:               uuid('id').primaryKey().defaultRandom(),
+  org_id:           uuid('org_id').references(() => orgs.id).notNull(),
+  raw_text:         text('raw_text'),
+  extracted_fields: jsonb('extracted_fields'),
+  crawled_at:       timestamp('crawled_at').defaultNow(),
+}, (table) => ({
+  orgIdx: index('crawl_enrichments_org_idx').on(table.org_id),
+}))

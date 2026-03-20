@@ -13,6 +13,8 @@
     "seed:docs": "tsx --env-file .env.local scripts/seed-documents.ts",
     "seed:resources": "tsx --env-file .env.local scripts/seed-resources.ts",
     "embed:docs": "tsx --env-file .env.local scripts/generate-doc-embeddings.ts",
+    "crawl": "tsx --env-file .env.local scripts/crawl-enrich.ts",
+    "db:push": "drizzle-kit push",
     "studio": "drizzle-kit studio"
   },
   "dependencies": {
