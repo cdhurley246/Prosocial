@@ -113,6 +113,79 @@ body::after {
   padding: 0 1.5rem;
 }
 
+/* ── CHATBOT — WashU green palette ── */
+/* WashU Green: #215732 | Dark Green: #13322B | Mint: #B5E3D8  */
+
+.home-chat {
+  background: #215732;
+}
+
+.home-chat .chip {
+  border-color: rgba(181,227,216,0.25);
+  color: rgba(181,227,216,0.65);
+}
+
+.home-chat .chip:hover {
+  border-color: rgba(181,227,216,0.55);
+  color: #B5E3D8;
+  background: rgba(181,227,216,0.08);
+}
+
+.home-chat .chat-window {
+  background: rgba(19,50,43,0.55);
+  border-color: rgba(181,227,216,0.15);
+}
+
+.home-chat .chat-window::-webkit-scrollbar-thumb {
+  background: rgba(181,227,216,0.2);
+}
+
+.home-chat .chat-msg-label.user {
+  color: #B5E3D8;
+}
+
+.home-chat .chat-msg-label.ai {
+  color: rgba(181,227,216,0.5);
+}
+
+.home-chat .chat-input-row {
+  border-color: rgba(181,227,216,0.15);
+}
+
+.home-chat .chat-input {
+  background: rgba(19,50,43,0.4);
+  caret-color: #B5E3D8;
+}
+
+.home-chat .chat-input::placeholder {
+  color: rgba(181,227,216,0.35);
+}
+
+.home-chat .chat-send {
+  background: #13322B;
+}
+
+.home-chat .chat-send:hover {
+  background: #0b1e17;
+}
+
+.home-chat .match-ready {
+  background: rgba(19,50,43,0.5);
+  border-color: rgba(181,227,216,0.15);
+}
+
+.home-chat .match-ready-label {
+  color: #B5E3D8;
+}
+
+.home-chat .match-ready-btn {
+  background: #13322B;
+}
+
+.home-chat .match-ready-btn:hover {
+  background: #0b1e17;
+}
+
 /* ── HOME (single-column) ── */
 .home {
   max-width: 42rem;
