@@ -55,6 +55,9 @@ export const orgs = pgTable('orgs', {
   external_id:      text('external_id'),
   verified:         boolean('verified').default(false),
 
+  // Common Crawl enrichment
+  crawl_coverage:   text('crawl_coverage'),
+
   // Soft delete + timestamps
   deleted_at:       timestamp('deleted_at'),
   created_at:       timestamp('created_at').defaultNow(),
@@ -118,6 +121,17 @@ export const resources = pgTable('resources', {
   is_local:             boolean('is_local').default(false),
   deleted_at:           timestamp('deleted_at'),
   created_at:           timestamp('created_at').defaultNow(),
+})
+
+// ─── CRAWL ENRICHMENTS ───────────────────────────────────────
+
+export const crawl_enrichments = pgTable('crawl_enrichments', {
+  id:               uuid('id').primaryKey().defaultRandom(),
+  org_id:           uuid('org_id').references(() => orgs.id).notNull(),
+  raw_text:         text('raw_text'),
+  extracted_fields: jsonb('extracted_fields'),
+  crawled_at:       timestamp('crawled_at').defaultNow(),
+  created_at:       timestamp('created_at').defaultNow(),
 })
 
 // ─── INTAKE SESSIONS ─────────────────────────────────────────

@@ -95,8 +95,8 @@ export default function Home() {
         <a href="#" className="nav-cta">Clinic Login →</a>
       </nav>
 
-      <section className="hero">
-        <div className="hero-left">
+      <main className="home">
+        <div className="home-intro">
           <p className="kicker">St. Louis Cooperative Resource Network</p>
           <h1 className="hero-title">
             Building <em>better</em><br />
@@ -108,34 +108,9 @@ export default function Home() {
             across Missouri and Illinois — connecting you with the knowledge, models, and
             partners you need to succeed.
           </p>
-          <div className="stat-strip">
-            <div className="stat">
-              <div className="stat-n">400+</div>
-              <div className="stat-l">Local Orgs</div>
-            </div>
-            <div className="stat">
-              <div className="stat-n">MO &amp; IL</div>
-              <div className="stat-l">Coverage</div>
-            </div>
-            <div className="stat">
-              <div className="stat-n">Free</div>
-              <div className="stat-l">Always</div>
-            </div>
-          </div>
         </div>
 
-        <div className="hero-divider" />
-
-        <div className="hero-right">
-          <p className="panel-label">AI-Powered Intake</p>
-          <h2 className="panel-heading">
-            Tell us about your<br />organization
-          </h2>
-          <p className="panel-sub">
-            Describe your mission and what you&apos;re trying to build — we&apos;ll match you with
-            similar organizations, relevant bylaws, and resources.
-          </p>
-
+        <div className="home-chat">
           {!matchUrl && (
             <div className="chips">
               {CHIPS.map(chip => (
@@ -200,7 +175,24 @@ export default function Home() {
             </div>
           )}
         </div>
-      </section>
+      </main>
+
+      <div className="home-below">
+        <div className="stat-strip">
+          <div className="stat">
+            <div className="stat-n">400+</div>
+            <div className="stat-l">Local Orgs</div>
+          </div>
+          <div className="stat">
+            <div className="stat-n">MO &amp; IL</div>
+            <div className="stat-l">Coverage</div>
+          </div>
+          <div className="stat">
+            <div className="stat-n">Free</div>
+            <div className="stat-l">Always</div>
+          </div>
+        </div>
+      </div>
 
       <section className="how">
         <div className="how-step">

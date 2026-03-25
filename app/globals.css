@@ -113,6 +113,44 @@ body::after {
   padding: 0 1.5rem;
 }
 
+/* ── HOME (single-column) ── */
+.home {
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: 5rem 2rem 0;
+}
+
+.home-intro {
+  margin-bottom: 3.5rem;
+}
+
+.home-intro .kicker::before {
+  display: none;
+}
+
+.home-intro .hero-body {
+  max-width: 100%;
+  margin-bottom: 0;
+}
+
+.home-chat {
+  background: var(--ink);
+  padding: 2rem 2.5rem 2.5rem;
+  overflow: hidden;
+}
+
+.home-below {
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+  border-top: 1px solid var(--rule);
+}
+
+.home-below .stat-strip {
+  border-top: none;
+  padding-top: 0;
+}
+
 /* ── HERO ── */
 .hero {
   display: grid;

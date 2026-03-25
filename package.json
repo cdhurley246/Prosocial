@@ -13,6 +13,8 @@
     "seed:docs": "tsx --env-file .env.local scripts/seed-documents.ts",
     "seed:resources": "tsx --env-file .env.local scripts/seed-resources.ts",
     "embed:docs": "tsx --env-file .env.local scripts/generate-doc-embeddings.ts",
+    "backfill:websites": "tsx --env-file .env.local scripts/backfill-websites.ts",
+    "crawl": "tsx --env-file .env.local scripts/run-crawl-pipeline.ts",
     "studio": "drizzle-kit studio"
   },
   "dependencies": {
