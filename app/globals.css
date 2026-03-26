@@ -73,6 +73,10 @@ body::after {
   display: flex;
 }
 
+.nav-links li:first-child a {
+  border-left: 1px solid var(--rule);
+}
+
 .nav-links li a {
   display: flex;
   align-items: center;
