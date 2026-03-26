@@ -195,15 +195,23 @@ body::after {
 .home {
   max-width: 42rem;
   margin: 0 auto;
-  padding: 5rem 2rem 0;
+  padding: 2rem 2rem 0;
 }
 
 .home-intro {
-  margin-bottom: 3.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.home-intro .kicker {
+  margin-bottom: 0.75rem;
 }
 
 .home-intro .kicker::before {
   display: none;
+}
+
+.home-intro .hero-title {
+  margin-bottom: 1rem;
 }
 
 .home-intro .hero-body {
