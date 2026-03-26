@@ -1,19 +1,10 @@
 import Link from 'next/link'
+import Nav from '@/components/Nav'
 
 export default function ResourcesPage() {
   return (
     <>
-      <nav className="nav">
-        <Link href="/" className="nav-logo">
-          Pro<span>social</span>
-        </Link>
-        <ul className="nav-links">
-          <li><a href="/resources" style={{ color: 'var(--ink)' }}>Resources</a></li>
-          <li><a href="/browse">Browse</a></li>
-          <li><a href="/about">About</a></li>
-        </ul>
-        <a href="#" className="nav-cta">Clinic Login →</a>
-      </nav>
+      <Nav />
 
       <div className="resources-hub">
         <div className="resources-hub-header">

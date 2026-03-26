@@ -1,5 +1,6 @@
 import { neon } from '@neondatabase/serverless'
 import Link from 'next/link'
+import Nav from '@/components/Nav'
 import { notFound } from 'next/navigation'
 
 interface Document {
@@ -121,17 +122,7 @@ export default async function OrgPage({ params }: { params: Promise<{ slug: stri
 
   return (
     <>
-      <nav className="nav">
-        <Link href="/" className="nav-logo">
-          Pro<span>social</span>
-        </Link>
-        <ul className="nav-links">
-          <li><a href="/resources">Resources</a></li>
-          <li><a href="/browse">Browse</a></li>
-          <li><a href="/about">About</a></li>
-        </ul>
-        <a href="#" className="nav-cta">Clinic Login →</a>
-      </nav>
+      <Nav />
 
       {/* ── ORG HEADER BANNER ── */}
       <header className="org-header">

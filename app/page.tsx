@@ -1,6 +1,7 @@
 'use client'
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
+import Nav from '@/components/Nav'
 
 interface Message {
   role: 'user' | 'assistant'
@@ -82,18 +83,7 @@ export default function Home() {
 
   return (
     <>
-      <nav className="nav">
-        <a href="/" className="nav-logo">
-          Pro<span>social</span>
-        </a>
-        <ul className="nav-links">
-          <li><a href="/resources">Resources</a></li>
-          <li><a href="/browse">Browse</a></li>
-          <li><a href="/about">About</a></li>
-        </ul>
-        <p className="nav-disclaimer">Nothing on this page constitutes legal advice — please consult a lawyer</p>
-        <a href="#" className="nav-cta">Clinic Login →</a>
-      </nav>
+      <Nav />
 
       <main className="home">
         <div className="home-intro">

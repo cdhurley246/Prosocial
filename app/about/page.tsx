@@ -1,19 +1,10 @@
 import Link from 'next/link'
+import Nav from '@/components/Nav'
 
 export default function AboutPage() {
   return (
     <>
-      <nav className="nav">
-        <Link href="/" className="nav-logo">
-          Pro<span>social</span>
-        </Link>
-        <ul className="nav-links">
-          <li><a href="/resources">Resources</a></li>
-          <li><a href="/browse">Browse</a></li>
-          <li><a href="/about">About</a></li>
-        </ul>
-        <a href="#" className="nav-cta">Clinic Login →</a>
-      </nav>
+      <Nav />
 
       <div className="about-content">
         <div className="about-main">

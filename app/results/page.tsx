@@ -2,6 +2,7 @@
 import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import Nav from '@/components/Nav'
 
 interface OrgResult {
   id: string
@@ -331,17 +332,7 @@ function ResultsContent() {
 export default function ResultsPage() {
   return (
     <>
-      <nav className="nav">
-        <Link href="/" className="nav-logo">
-          Pro<span>social</span>
-        </Link>
-        <ul className="nav-links">
-          <li><a href="/resources">Resources</a></li>
-          <li><a href="/browse">Browse</a></li>
-          <li><a href="/about">About</a></li>
-        </ul>
-        <a href="#" className="nav-cta">Clinic Login →</a>
-      </nav>
+      <Nav />
 
       <Suspense fallback={<div className="loading-state">Loading…</div>}>
         <ResultsContent />

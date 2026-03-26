@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import Link from 'next/link'
+import Nav from '@/components/Nav'
 import { neon } from '@neondatabase/serverless'
 
 const DOC_TYPE_LABELS: Record<string, string> = {
@@ -53,17 +54,7 @@ export default async function LegalDocsPage() {
 
   return (
     <>
-      <nav className="nav">
-        <Link href="/" className="nav-logo">
-          Pro<span>social</span>
-        </Link>
-        <ul className="nav-links">
-          <li><a href="/resources">Resources</a></li>
-          <li><a href="/browse">Browse</a></li>
-          <li><a href="/about">About</a></li>
-        </ul>
-        <a href="#" className="nav-cta">Clinic Login →</a>
-      </nav>
+      <Nav />
 
       <div className="legal-docs-layout">
         <div className="legal-docs-header">

@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import Link from 'next/link'
+import Nav from '@/components/Nav'
 import { neon } from '@neondatabase/serverless'
 
 interface Org {
@@ -29,17 +30,7 @@ export default async function BrowsePage() {
 
   return (
     <>
-      <nav className="nav">
-        <Link href="/" className="nav-logo">
-          Pro<span>social</span>
-        </Link>
-        <ul className="nav-links">
-          <li><a href="/resources">Resources</a></li>
-          <li><a href="/browse" style={{ color: 'var(--ink)' }}>Browse</a></li>
-          <li><a href="/about">About</a></li>
-        </ul>
-        <a href="#" className="nav-cta">Clinic Login →</a>
-      </nav>
+      <Nav />
 
       <div className="browse-layout">
         <aside className="browse-sidebar">

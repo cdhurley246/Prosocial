@@ -146,12 +146,32 @@ export const sessions = pgTable('sessions', {
   created_at:        timestamp('created_at').defaultNow(),
 })
 
-// ─── USERS (Clinic Staff) ─────────────────────────────────────
+// ─── USERS ───────────────────────────────────────────────────
 
 export const users = pgTable('users', {
   id:         uuid('id').primaryKey().defaultRandom(),
   email:      text('email').notNull().unique(),
   name:       text('name'),
-  role:       text('role').default('staff'),
+  image:      text('image'),
+  role:       text('role').default('user'),
   created_at: timestamp('created_at').defaultNow(),
+})
+
+// ─── SAVED RESULTS ───────────────────────────────────────────
+
+export const saved_results = pgTable('saved_results', {
+  id:         uuid('id').primaryKey().defaultRandom(),
+  user_id:    uuid('user_id').references(() => users.id).notNull(),
+  session_id: uuid('session_id').references(() => sessions.id).notNull(),
+  label:      text('label'),
+  created_at: timestamp('created_at').defaultNow(),
+})
+
+// ─── SAVED RESOURCES ─────────────────────────────────────────
+
+export const saved_resources = pgTable('saved_resources', {
+  id:          uuid('id').primaryKey().defaultRandom(),
+  user_id:     uuid('user_id').references(() => users.id).notNull(),
+  resource_id: uuid('resource_id').references(() => resources.id).notNull(),
+  created_at:  timestamp('created_at').defaultNow(),
 })
