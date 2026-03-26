@@ -51,7 +51,7 @@ body::after {
   color: var(--ink);
   display: flex;
   align-items: center;
-  margin-right: 2.5rem;
+  margin-right: 0;
   padding-right: 2.5rem;
   border-right: 1px solid var(--rule);
   text-decoration: none;
