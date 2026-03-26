@@ -64,15 +64,20 @@ body::after {
 
 .nav-links {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   list-style: none;
+}
+
+.nav-links li {
+  flex: 0 0 8rem;
+  display: flex;
 }
 
 .nav-links li a {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 8rem;
+  flex: 1;
   height: 56px;
   padding: 0;
   font-size: 0.78rem;
