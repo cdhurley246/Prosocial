@@ -231,20 +231,19 @@ body::after {
 }
 
 .home-chat .chip {
-  border-color: rgba(33,87,50,0.35);
-  color: #215732;
-  background: rgba(255,255,255,0.3);
+  border-color: rgba(33,87,50,0.3);
+  color: #13322B;
 }
 
 .home-chat .chip:hover {
-  border-color: #215732;
+  border-color: #13322B;
   color: #13322B;
-  background: rgba(255,255,255,0.5);
+  background: rgba(33,87,50,0.08);
 }
 
 .home-chat .chat-window {
   background: #215732;
-  border-color: rgba(181,227,216,0.2);
+  border-color: rgba(181,227,216,0.15);
 }
 
 .home-chat .chat-window::-webkit-scrollbar-thumb {
@@ -264,7 +263,7 @@ body::after {
 }
 
 .home-chat .chat-input-row {
-  border-color: rgba(181,227,216,0.2);
+  border-color: rgba(181,227,216,0.15);
 }
 
 .home-chat .chat-input {
@@ -274,7 +273,7 @@ body::after {
 }
 
 .home-chat .chat-input::placeholder {
-  color: rgba(181,227,216,0.45);
+  color: rgba(181,227,216,0.4);
 }
 
 .home-chat .chat-send {
@@ -287,7 +286,7 @@ body::after {
 
 .home-chat .match-ready {
   background: #215732;
-  border-color: rgba(181,227,216,0.2);
+  border-color: rgba(181,227,216,0.15);
 }
 
 .home-chat .match-ready-label {
