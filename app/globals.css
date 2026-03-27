@@ -301,18 +301,23 @@ body::after {
   background: #0d2219;
 }
 
-/* ── HOME (single-column) ── */
+/* ── HOME ── */
 .home {
-  max-width: 42rem;
+  max-width: 72rem;
   margin: 0 auto;
-  padding: 2rem 2rem 0;
+  padding: 2rem 2.5rem 0;
 }
 
 .home-intro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 3rem;
+  align-items: center;
   margin-bottom: 1.5rem;
 }
 
 .home-intro .kicker {
+  grid-column: 1 / -1;
   margin-bottom: 0.75rem;
 }
 
@@ -321,12 +326,15 @@ body::after {
 }
 
 .home-intro .hero-title {
-  margin-bottom: 1rem;
+  grid-column: 1;
+  margin-bottom: 0;
 }
 
 .home-intro .hero-body {
+  grid-column: 2;
   max-width: 100%;
   margin-bottom: 0;
+  align-self: center;
 }
 
 .home-chat {
@@ -336,9 +344,9 @@ body::after {
 }
 
 .home-below {
-  max-width: 42rem;
+  max-width: 72rem;
   margin: 0 auto;
-  padding: 3rem 2rem;
+  padding: 3rem 2.5rem;
   border-top: 1px solid var(--rule);
 }
 
