@@ -362,7 +362,6 @@ body::after {
 }
 
 .home-chat {
-  background: var(--ink);
   padding: 2rem 2.5rem 2.5rem;
   overflow: hidden;
 }
