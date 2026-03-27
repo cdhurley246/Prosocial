@@ -103,11 +103,15 @@ body::after {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.7rem;
+  font-size: 0.6rem;
   font-weight: 500;
   color: var(--red);
   letter-spacing: 0.02em;
-  white-space: nowrap;
+  white-space: normal;
+  text-align: center;
+  line-height: 1.4;
+  padding: 0 1rem;
+  max-width: 180px;
 }
 
 .nav-cta {
