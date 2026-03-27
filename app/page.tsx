@@ -93,11 +93,11 @@ export default function Home() {
             organizations,<br />
             together.
           </h1>
-          <p className="hero-body">
-            A shared resource commons for nonprofits, co-ops, and socially-focused organizations
-            across Missouri and Illinois — connecting you with the knowledge, models, and
-            partners you need to succeed.
-          </p>
+          <ol className="hero-steps">
+            <li><span className="hero-step-num">1</span>Tell us about your organization using the chatbot below.</li>
+            <li><span className="hero-step-num">2</span>Get matched with resources from organizations with missions similar to yours.</li>
+            <li><span className="hero-step-num">3</span>Connect with partners, funders, and models across Missouri and Illinois.</li>
+          </ol>
         </div>
 
         <div className="home-chat">
