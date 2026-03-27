@@ -227,78 +227,78 @@ body::after {
 /* WashU Green: #215732 | Dark Green: #13322B | Mint: #B5E3D8  */
 
 .home-chat {
-  background: #B5E3D8;
+  background: #215732;
 }
 
 .home-chat .chip {
-  border-color: rgba(33,87,50,0.3);
-  color: #215732;
+  border-color: rgba(181,227,216,0.3);
+  color: rgba(181,227,216,0.8);
 }
 
 .home-chat .chip:hover {
-  border-color: #215732;
-  color: #13322B;
-  background: rgba(33,87,50,0.08);
+  border-color: #B5E3D8;
+  color: #B5E3D8;
+  background: rgba(181,227,216,0.08);
 }
 
 .home-chat .chat-window {
-  background: #f0faf7;
-  border-color: rgba(33,87,50,0.2);
+  background: #1a4a2c;
+  border-color: rgba(181,227,216,0.12);
 }
 
 .home-chat .chat-window::-webkit-scrollbar-thumb {
-  background: rgba(33,87,50,0.2);
+  background: rgba(181,227,216,0.15);
 }
 
 .home-chat .chat-msg-label.user {
-  color: #215732;
+  color: #B5E3D8;
 }
 
 .home-chat .chat-msg-label.ai {
-  color: rgba(33,87,50,0.5);
+  color: rgba(181,227,216,0.45);
 }
 
 .home-chat .chat-msg-text {
-  color: #13322B;
+  color: rgba(255,255,255,0.88);
 }
 
 .home-chat .chat-input-row {
-  border-color: rgba(33,87,50,0.2);
+  border-color: rgba(181,227,216,0.12);
 }
 
 .home-chat .chat-input {
-  background: #f0faf7;
-  color: #13322B;
-  caret-color: #215732;
+  background: #1a4a2c;
+  color: rgba(255,255,255,0.88);
+  caret-color: #B5E3D8;
 }
 
 .home-chat .chat-input::placeholder {
-  color: rgba(33,87,50,0.4);
+  color: rgba(181,227,216,0.35);
 }
 
 .home-chat .chat-send {
-  background: #215732;
+  background: #13322B;
 }
 
 .home-chat .chat-send:hover {
-  background: #13322B;
+  background: #0d2219;
 }
 
 .home-chat .match-ready {
-  background: #f0faf7;
-  border-color: rgba(33,87,50,0.2);
+  background: #1a4a2c;
+  border-color: rgba(181,227,216,0.12);
 }
 
 .home-chat .match-ready-label {
-  color: #215732;
+  color: #B5E3D8;
 }
 
 .home-chat .match-ready-btn {
-  background: #215732;
+  background: #13322B;
 }
 
 .home-chat .match-ready-btn:hover {
-  background: #13322B;
+  background: #0d2219;
 }
 
 /* ── HOME ── */
