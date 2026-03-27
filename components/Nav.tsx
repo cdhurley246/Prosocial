@@ -28,6 +28,11 @@ export default function Nav() {
             About
           </Link>
         </li>
+        <li>
+          <Link href="/connect" style={pathname?.startsWith('/connect') ? { color: 'var(--ink)' } : {}}>
+            Connect
+          </Link>
+        </li>
       </ul>
       <p className="nav-disclaimer">Nothing on this page constitutes legal advice — please consult a lawyer</p>
       {status === 'loading' ? (

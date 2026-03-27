@@ -972,6 +972,173 @@ a.result-card {
   text-decoration: underline;
 }
 
+/* ── CONNECT PAGE ── */
+.connect-main {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 5rem 2rem 6rem;
+}
+
+.connect-hero {
+  max-width: 640px;
+  margin-bottom: 5rem;
+}
+
+.connect-auth-hero {
+  max-width: 640px;
+  margin-bottom: 4rem;
+  padding-bottom: 3rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.connect-hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin: 0.5rem 0 1.25rem;
+}
+
+.connect-hero-title em {
+  font-style: italic;
+  color: var(--moss);
+}
+
+.connect-hero-sub {
+  font-size: 1.05rem;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-bottom: 2rem;
+}
+
+.connect-cta {
+  display: inline-flex;
+  align-items: center;
+  background: var(--ink);
+  color: var(--cream);
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  padding: 0.85rem 1.75rem;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.connect-cta:hover {
+  background: #111;
+}
+
+.connect-cta-note {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-top: 0.75rem;
+}
+
+.connect-features {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+  margin-bottom: 5rem;
+}
+
+.connect-feature-card {
+  background: var(--cream);
+  padding: 2.25rem 2rem;
+}
+
+.connect-feature-label {
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+}
+
+.connect-feature-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0 0 0.75rem;
+}
+
+.connect-feature-body {
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.connect-bottom-cta {
+  text-align: center;
+  padding: 3.5rem 2rem;
+  border: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.connect-bottom-cta p {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  color: var(--ink);
+  margin: 0;
+}
+
+.connect-coming-soon {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.connect-soon-card {
+  padding: 2rem;
+  border: 1px solid var(--rule);
+  position: relative;
+}
+
+.connect-soon-label {
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.4rem;
+}
+
+.connect-soon-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0 0 0.6rem;
+}
+
+.connect-soon-body {
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 1.25rem;
+}
+
+.connect-soon-badge {
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--moss);
+  border: 1px solid var(--moss);
+  padding: 0.2rem 0.6rem;
+}
+
 /* ── ABOUT PAGE ── */
 .about-content {
   display: grid;
