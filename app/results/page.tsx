@@ -52,12 +52,25 @@ function ResultsContent() {
     if (p) profile = JSON.parse(p)
   } catch {}
 
+  const MIDWEST_STATES = [
+    { code: 'IL', label: 'Illinois' },
+    { code: 'MO', label: 'Missouri' },
+    { code: 'WI', label: 'Wisconsin' },
+    { code: 'MN', label: 'Minnesota' },
+    { code: 'OH', label: 'Ohio' },
+    { code: 'MI', label: 'Michigan' },
+    { code: 'IN', label: 'Indiana' },
+    { code: 'IA', label: 'Iowa' },
+  ]
+
   const [results, setResults] = useState<OrgResult[]>([])
   const [documents, setDocuments] = useState<DocResult[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [chatMessages, setChatMessages] = useState<Message[]>([])
   const [chatOpen, setChatOpen] = useState(false)
+  // Empty set = no filter (all states). Non-empty = show only selected.
+  const [selectedStates, setSelectedStates] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     try {
@@ -71,10 +84,13 @@ function ResultsContent() {
       setLoading(false)
       return
     }
+    setLoading(true)
+    setError('')
+    const states = selectedStates.size > 0 ? Array.from(selectedStates) : undefined
     fetch('/api/match', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query, limit: 8 }),
+      body: JSON.stringify({ query, limit: 8, states }),
     })
       .then(r => r.json())
       .then(data => {
@@ -86,7 +102,7 @@ function ResultsContent() {
       })
       .catch(() => setError('Something went wrong'))
       .finally(() => setLoading(false))
-  }, [query])
+  }, [query, selectedStates])
 
   const orgTypes = profile?.org_types || []
   const issueAreas = profile?.issue_areas || []
@@ -150,21 +166,46 @@ function ResultsContent() {
           <p className="sidebar-label">Refine Search</p>
           <div className="refine-filters">
             <label className="filter-label">
-              <input type="checkbox" defaultChecked /> Worker Co-ops
-            </label>
-            <label className="filter-label">
-              <input type="checkbox" /> Nonprofits
-            </label>
-            <label className="filter-label">
-              <input type="checkbox" /> Consumer Co-ops
+              <input type="checkbox" defaultChecked readOnly /> Worker Co-ops
             </label>
             <div className="filter-divider" />
-            <label className="filter-label">
-              <input type="checkbox" defaultChecked /> Missouri
-            </label>
-            <label className="filter-label">
-              <input type="checkbox" defaultChecked /> Illinois
-            </label>
+            <p style={{ fontSize: '0.72rem', color: 'var(--muted)', marginBottom: 6, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+              State {selectedStates.size > 0 && <span style={{ color: 'var(--red)' }}>({selectedStates.size} selected)</span>}
+            </p>
+            {MIDWEST_STATES.map(({ code, label }) => (
+              <label key={code} className="filter-label">
+                <input
+                  type="checkbox"
+                  checked={selectedStates.has(code)}
+                  onChange={e => {
+                    setSelectedStates(prev => {
+                      const next = new Set(prev)
+                      if (e.target.checked) next.add(code)
+                      else next.delete(code)
+                      return next
+                    })
+                  }}
+                />
+                {' '}{label}
+              </label>
+            ))}
+            {selectedStates.size > 0 && (
+              <button
+                onClick={() => setSelectedStates(new Set())}
+                style={{
+                  marginTop: 6,
+                  fontSize: '0.72rem',
+                  color: 'var(--red)',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: 0,
+                  textAlign: 'left',
+                }}
+              >
+                Clear filter
+              </button>
+            )}
           </div>
         </div>
 

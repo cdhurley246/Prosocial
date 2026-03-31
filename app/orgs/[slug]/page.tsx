@@ -49,6 +49,19 @@ function nteeDescription(code: string | null): string | null {
   return NTEE_GROUPS[major] ?? null
 }
 
+interface CrawlEnrichment {
+  mission_summary?: string | null
+  services_offered?: string[] | null
+  population_served?: string[] | null
+  geographic_focus?: string | null
+  org_type_indicators?: string[] | null
+  additional_notes?: string | null
+  // crawl-poc schema fields
+  mission?: string | null
+  sector?: string | null
+  services?: string[] | null
+}
+
 interface Org {
   id: string
   slug: string
@@ -74,6 +87,7 @@ interface Org {
   source: string | null
   verified: boolean
   documents: Document[]
+  enrichment: CrawlEnrichment | null
 }
 
 async function getOrg(slug: string): Promise<Org | null> {
@@ -94,7 +108,14 @@ async function getOrg(slug: string): Promise<Org | null> {
           )
         ) FILTER (WHERE d.id IS NOT NULL AND d.deleted_at IS NULL AND d.is_public = true),
         '[]'
-      ) AS documents
+      ) AS documents,
+      (
+        SELECT ce.extracted_fields
+        FROM crawl_enrichments ce
+        WHERE ce.org_id = o.id
+        ORDER BY ce.crawled_at DESC
+        LIMIT 1
+      ) AS enrichment
     FROM orgs o
     LEFT JOIN documents d ON d.org_id = o.id
     WHERE o.slug = ${slug}
@@ -118,7 +139,13 @@ export default async function OrgPage({ params }: { params: Promise<{ slug: stri
   const propublicaUrl = org.external_id
     ? `https://projects.propublica.org/nonprofits/organizations/${org.external_id}`
     : null
-  const hasRichContent = org.mission || org.description || org.documents?.length > 0
+  const e = org.enrichment
+  const enrichedMission = e?.mission_summary ?? e?.mission ?? null
+  const enrichedServices = e?.services_offered ?? e?.services ?? null
+  const enrichedPopulation = Array.isArray(e?.population_served)
+    ? (e.population_served as string[]).join(', ')
+    : (e?.population_served as string | null | undefined) ?? null
+  const hasRichContent = org.mission || org.description || org.documents?.length > 0 || enrichedMission
 
   return (
     <>
@@ -173,6 +200,53 @@ export default async function OrgPage({ params }: { params: Promise<{ slug: stri
             <section className="org-section">
               <p className="org-section-label">About</p>
               <div className="org-description">{org.description}</div>
+            </section>
+          )}
+
+          {/* ── CRAWL ENRICHMENT ── */}
+          {e && (enrichedMission || enrichedServices?.length || enrichedPopulation || e.geographic_focus) && (
+            <section className="org-section">
+              <p className="org-section-label">
+                Web Profile
+                <span style={{ fontSize: '0.7rem', fontWeight: 400, color: 'var(--muted)', marginLeft: 8 }}>
+                  from Common Crawl
+                </span>
+              </p>
+
+              {!org.mission && enrichedMission && (
+                <blockquote className="org-mission">{enrichedMission}</blockquote>
+              )}
+
+              {enrichedServices && enrichedServices.length > 0 && (
+                <div style={{ marginTop: 12 }}>
+                  <p style={{ fontSize: '0.78rem', color: 'var(--muted)', marginBottom: 6, fontWeight: 600 }}>
+                    Services
+                  </p>
+                  <div className="tag-list">
+                    {enrichedServices.map((s: string) => (
+                      <span key={s} className="tag tag-green">{s}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {enrichedPopulation && (
+                <div style={{ marginTop: 12 }}>
+                  <p style={{ fontSize: '0.78rem', color: 'var(--muted)', marginBottom: 4, fontWeight: 600 }}>
+                    Population Served
+                  </p>
+                  <p style={{ fontSize: '0.9rem', color: 'var(--ink)' }}>{enrichedPopulation}</p>
+                </div>
+              )}
+
+              {e.geographic_focus && (
+                <div style={{ marginTop: 12 }}>
+                  <p style={{ fontSize: '0.78rem', color: 'var(--muted)', marginBottom: 4, fontWeight: 600 }}>
+                    Geographic Focus
+                  </p>
+                  <p style={{ fontSize: '0.9rem', color: 'var(--ink)' }}>{e.geographic_focus}</p>
+                </div>
+              )}
             </section>
           )}
 

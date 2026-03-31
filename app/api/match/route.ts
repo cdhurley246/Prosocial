@@ -25,7 +25,7 @@ async function generateQueryEmbedding(query: string): Promise<number[]> {
 }
 
 export async function POST(req: NextRequest) {
-  const { query, limit = 5 } = await req.json()
+  const { query, limit = 5, states } = await req.json()
 
   if (!query) {
     return Response.json({ error: 'Query is required' }, { status: 400 })
@@ -36,26 +36,30 @@ export async function POST(req: NextRequest) {
     const embedding = await generateQueryEmbedding(query)
     const embeddingStr = JSON.stringify(embedding)
 
-    const results = await sql`
-      SELECT
-        o.id,
-        o.slug,
-        o.name,
-        o.mission,
-        o.description,
-        o.org_types,
-        o.issue_areas,
-        o.city,
-        o.state,
-        o.website,
-        o.ntee_code,
-        1 - (oe.embedding <=> ${embeddingStr}::vector) as similarity
-      FROM orgs o
-      JOIN org_embeddings oe ON o.id = oe.org_id
-      WHERE o.deleted_at IS NULL
-      ORDER BY oe.embedding <=> ${embeddingStr}::vector
-      LIMIT ${limit}
-    `
+    const results = (states?.length)
+      ? await sql`
+          SELECT
+            o.id, o.slug, o.name, o.mission, o.description,
+            o.org_types, o.issue_areas, o.city, o.state, o.website, o.ntee_code,
+            1 - (oe.embedding <=> ${embeddingStr}::vector) as similarity
+          FROM orgs o
+          JOIN org_embeddings oe ON o.id = oe.org_id
+          WHERE o.deleted_at IS NULL
+            AND o.state = ANY(${states}::text[])
+          ORDER BY oe.embedding <=> ${embeddingStr}::vector
+          LIMIT ${limit}
+        `
+      : await sql`
+          SELECT
+            o.id, o.slug, o.name, o.mission, o.description,
+            o.org_types, o.issue_areas, o.city, o.state, o.website, o.ntee_code,
+            1 - (oe.embedding <=> ${embeddingStr}::vector) as similarity
+          FROM orgs o
+          JOIN org_embeddings oe ON o.id = oe.org_id
+          WHERE o.deleted_at IS NULL
+          ORDER BY oe.embedding <=> ${embeddingStr}::vector
+          LIMIT ${limit}
+        `
 
     const docResults = await sql`
       SELECT

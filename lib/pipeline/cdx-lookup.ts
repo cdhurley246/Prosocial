@@ -1,4 +1,4 @@
-export const CRAWL_ID = process.env.CRAWL_ID ?? 'CC-MAIN-2024-51'
+export const CRAWL_ID = process.env.CRAWL_ID ?? 'CC-MAIN-2025-05'
 
 export interface CDXRecord {
   url: string
@@ -11,6 +11,31 @@ export interface CDXRecord {
 
 // Priority path segments for mission-relevant pages
 const PRIORITY_PATHS = ['about', 'mission', 'programs', 'services', 'who-we-are', 'what-we-do']
+
+async function fetchWithRetry(
+  url: string,
+  options: RequestInit = {},
+  retries = 3,
+  baseDelayMs = 1000,
+): Promise<Response> {
+  let lastErr: Error = new Error('Unknown error')
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    if (attempt > 0) {
+      await new Promise(r => setTimeout(r, baseDelayMs * Math.pow(2, attempt - 1)))
+    }
+    try {
+      const res = await fetch(url, options)
+      if (res.status >= 500 && attempt < retries) {
+        lastErr = new Error(`HTTP ${res.status}`)
+        continue
+      }
+      return res
+    } catch (err) {
+      lastErr = err instanceof Error ? err : new Error(String(err))
+    }
+  }
+  throw lastErr
+}
 
 export async function lookupDomain(websiteUrl: string): Promise<CDXRecord[]> {
   const domain = websiteUrl
@@ -26,7 +51,7 @@ export async function lookupDomain(websiteUrl: string): Promise<CDXRecord[]> {
     filter: 'status:200',
   })
 
-  const res = await fetch(
+  const res = await fetchWithRetry(
     `https://index.commoncrawl.org/${CRAWL_ID}-index?${query}`
   )
 

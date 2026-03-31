@@ -6,12 +6,37 @@ const gunzipAsync = promisify(gunzip)
 const CC_BASE = 'https://data.commoncrawl.org'
 const MAX_TEXT_CHARS = 8000
 
+async function fetchWithRetry(
+  url: string,
+  options: RequestInit = {},
+  retries = 3,
+  baseDelayMs = 1000,
+): Promise<Response> {
+  let lastErr: Error = new Error('Unknown error')
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    if (attempt > 0) {
+      await new Promise(r => setTimeout(r, baseDelayMs * Math.pow(2, attempt - 1)))
+    }
+    try {
+      const res = await fetch(url, options)
+      if (res.status >= 500 && attempt < retries) {
+        lastErr = new Error(`HTTP ${res.status}`)
+        continue
+      }
+      return res
+    } catch (err) {
+      lastErr = err instanceof Error ? err : new Error(String(err))
+    }
+  }
+  throw lastErr
+}
+
 export async function fetchPageText(
   filename: string,
   offset: number,
   length: number
 ): Promise<string> {
-  const res = await fetch(`${CC_BASE}/${filename}`, {
+  const res = await fetchWithRetry(`${CC_BASE}/${filename}`, {
     headers: { Range: `bytes=${offset}-${offset + length - 1}` },
   })
 
