@@ -1,0 +1,138 @@
+[
+  {
+    "url": "https://chifreshkitchen.com",
+    "coverage": false,
+    "crawl_timestamp": null,
+    "extracted": null,
+    "error": null
+  },
+  {
+    "url": "https://newerawindows.com",
+    "coverage": true,
+    "crawl_timestamp": "20240223121734",
+    "extracted": {
+      "name": "New Era Windows",
+      "mission": null,
+      "sector": "manufacturing",
+      "services": [
+        "window manufacturing",
+        "window installation"
+      ],
+      "population_served": null,
+      "geographic_focus": "Chicago, Illinois",
+      "worker_owner_count": null,
+      "founding_year": 2012,
+      "governance_notes": "Worker-owned cooperative formed by former Republic Windows and Doors employees after a factory occupation",
+      "website_url": "https://newerawindows.com"
+    },
+    "error": null
+  },
+  {
+    "url": "https://chicommons.coop",
+    "coverage": true,
+    "crawl_timestamp": "20240304213939",
+    "extracted": {
+      "name": "ChiCommons Cooperative",
+      "mission": "To cooperatively foster and grow a people-owned solidarity economy in the Chicago region by serving local businesses, cooperatives, and nonprofits with technology and business consulting services.",
+      "sector": "technology consulting, cooperative development, community internet access",
+      "services": [
+        "Technology consulting",
+        "Business consulting",
+        "Cooperative and solidarity economy mapping",
+        "Community internet access (BlockShare)",
+        "Time-banking and neighborhood resource sharing"
+      ],
+      "population_served": "Local businesses, cooperatives, nonprofits, social movements, inclusive real estate developments, and underserved Chicago communities",
+      "geographic_focus": "Chicago region",
+      "worker_owner_count": null,
+      "founding_year": 2020,
+      "governance_notes": "Multi-stakeholder Illinois Limited Worker Cooperative Association (LWCA) composed of Worker-Owners, Consumer-Owners, Producer-Owners, and Investor-Owners, enabling decisions in the best interests of a broader set of stakeholders than a typical corporation.",
+      "website_url": "https://chicommons.coop"
+    },
+    "error": null
+  },
+  {
+    "url": "https://cooperationracine.com",
+    "coverage": false,
+    "crawl_timestamp": null,
+    "extracted": null,
+    "error": null
+  },
+  {
+    "url": "https://buildersavenue.org",
+    "coverage": false,
+    "crawl_timestamp": null,
+    "extracted": null,
+    "error": null
+  },
+  {
+    "url": "https://centrodetrabajadoresunidos.org",
+    "coverage": true,
+    "crawl_timestamp": "20240305092733",
+    "extracted": {
+      "name": "Centro de Trabajadores Unidos",
+      "mission": null,
+      "sector": null,
+      "services": [],
+      "population_served": null,
+      "geographic_focus": null,
+      "worker_owner_count": null,
+      "founding_year": null,
+      "governance_notes": null,
+      "website_url": "https://centrodetrabajadoresunidos.org"
+    },
+    "error": null
+  },
+  {
+    "url": "https://www.iwca.coop",
+    "coverage": false,
+    "crawl_timestamp": null,
+    "extracted": null,
+    "error": null
+  },
+  {
+    "url": "https://newprairieconstruction.com",
+    "coverage": true,
+    "crawl_timestamp": "20240304041004",
+    "extracted": {
+      "name": "New Prairie Construction",
+      "mission": "To honor craft and community through their work by delivering quality construction projects with attention to detail, sustainable materials, and time-honored craftsmanship that creates spaces clients connect with.",
+      "sector": "construction and remodeling",
+      "services": [
+        "General contracting",
+        "Home repairs and remodeling",
+        "Energy efficient building",
+        "Solar installation",
+        "Kitchen and dining room remodeling",
+        "Bathroom remodeling",
+        "Whole house renovation",
+        "Smaller home improvement",
+        "Porches, decks, and pergolas",
+        "Home additions",
+        "Historic preservation",
+        "Timber framing"
+      ],
+      "population_served": "Homeowners, businesses, and community spaces",
+      "geographic_focus": "Greater Urbana-Champaign area, Illinois",
+      "worker_owner_count": null,
+      "founding_year": 1988,
+      "governance_notes": null,
+      "website_url": "https://newprairieconstruction.com"
+    },
+    "error": null
+  },
+  {
+    "url": "https://manaiacollective.com",
+    "coverage": false,
+    "crawl_timestamp": null,
+    "extracted": null,
+    "error": null
+  },
+  {
+    "url": "https://communitywealth.wustl.edu",
+    "coverage": false,
+    "crawl_timestamp": null,
+    "extracted": null,
+    "error": null
+  }
+]
