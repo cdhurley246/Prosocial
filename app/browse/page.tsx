@@ -22,6 +22,7 @@ export default async function BrowsePage() {
     SELECT id, slug, name, mission, org_types, issue_areas, city, state
     FROM orgs
     WHERE deleted_at IS NULL
+      AND NOT (org_types @> ARRAY['template'])
     ORDER BY name ASC
   ` as Org[]
 
