@@ -58,7 +58,7 @@ export default function AboutPage() {
             </p>
             <a
               className="clinic-link"
-              href="https://law.wustl.edu/clinics/entrepreneurship-and-nonprofit-law-clinic/"
+              href="https://law.washu.edu/academics/clinical-programs/entrepreneurship-clinic/"
               target="_blank"
               rel="noopener noreferrer"
             >

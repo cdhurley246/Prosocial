@@ -207,7 +207,7 @@ export default function Home() {
           Nothing on this site constitutes legal advice. Content is provided for informational purposes only.
           All parties should consult a licensed attorney before taking any significant steps, including signing paperwork or forming a legal entity.
           For low-cost legal assistance, contact the{' '}
-          <a href="https://law.wustl.edu/clinics/entrepreneurship-and-nonprofit-law-clinic/" target="_blank" rel="noopener noreferrer">
+          <a href="https://law.washu.edu/academics/clinical-programs/entrepreneurship-clinic/" target="_blank" rel="noopener noreferrer">
             WashU Entrepreneurship &amp; Nonprofit Law Clinic
           </a>.
         </p>

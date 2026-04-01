@@ -448,7 +448,7 @@ export default async function OrgPage({ params }: { params: Promise<{ slug: stri
             <p>
               Information sourced from public records. Nothing on this page constitutes legal advice.
               For legal guidance, contact the{' '}
-              <a href="https://law.wustl.edu/clinics/entrepreneurship-nonprofit-law-clinic/" target="_blank" rel="noopener noreferrer">
+              <a href="https://law.washu.edu/academics/clinical-programs/entrepreneurship-clinic/" target="_blank" rel="noopener noreferrer">
                 WashU Entrepreneurship &amp; Nonprofit Law Clinic
               </a>.
             </p>

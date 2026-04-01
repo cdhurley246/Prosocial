@@ -119,7 +119,7 @@ export default async function LegalDocsPage() {
           Nothing on this site constitutes legal advice. These documents are provided for informational
           and educational purposes only. Always consult a licensed attorney before adopting bylaws or
           forming a legal entity. For free legal assistance, contact the{' '}
-          <a href="https://law.wustl.edu/clinics/entrepreneurship-and-nonprofit-law-clinic/" target="_blank" rel="noopener noreferrer">
+          <a href="https://law.washu.edu/academics/clinical-programs/entrepreneurship-clinic/" target="_blank" rel="noopener noreferrer">
             WashU Entrepreneurship &amp; Nonprofit Law Clinic
           </a>.
         </p>
