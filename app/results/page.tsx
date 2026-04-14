@@ -256,10 +256,10 @@ function ResultsContent() {
   }
 
   return (
-    <div className="results-layout">
+    <div className={hasChosen ? 'results-layout' : 'results-layout results-layout-picker'}>
 
-      {/* ── SIDEBAR ── */}
-      <aside className="results-sidebar">
+      {/* ── SIDEBAR — hidden until user picks a category ── */}
+      {hasChosen && <aside className="results-sidebar">
         <Link href="/home" className="back-link">← Back to Search</Link>
 
         {profile && (
@@ -367,10 +367,10 @@ function ResultsContent() {
             )}
           </div>
         )}
-      </aside>
+      </aside>}
 
       {/* ── MAIN ── */}
-      <main className="results-main">
+      <main className={hasChosen ? 'results-main' : 'results-main results-main-picker'}>
 
         {/* Loading / error */}
         {loading && <div className="loading-state">Finding your matches…</div>}
@@ -379,30 +379,17 @@ function ResultsContent() {
         {/* ── PICKER — shown before user chooses a category ── */}
         {!loading && !error && !hasChosen && (
           <div className="results-picker">
-            <p className="results-picker-heading">Your results are ready. What would you like to see first?</p>
+            <p className="results-picker-heading">What would you like to see first?</p>
             <div className="results-picker-cards">
-
               <button className="picker-card" onClick={() => chooseTab('docs')}>
-                <span className="picker-card-icon">📄</span>
-                <span className="picker-card-title">Legal Document Templates & Examples</span>
-                <span className="picker-card-count">{documents.length} matched</span>
-                <span className="picker-card-desc">Bylaws, operating agreements, and legal guides relevant to your organization type.</span>
+                Legal Document Templates and Examples
               </button>
-
               <button className="picker-card" onClick={() => chooseTab('orgs')}>
-                <span className="picker-card-icon">🏛</span>
-                <span className="picker-card-title">Organizations Similar to Yours</span>
-                <span className="picker-card-count">{orgs.length} matched</span>
-                <span className="picker-card-desc">Real organizations with similar missions, structures, and issue areas.</span>
+                Organizations Similar to Yours
               </button>
-
               <button className="picker-card" onClick={() => chooseTab('resources')}>
-                <span className="picker-card-icon">🔗</span>
-                <span className="picker-card-title">Other Resources</span>
-                <span className="picker-card-count">{resources.length} matched</span>
-                <span className="picker-card-desc">Guides, tools, and external organizations that can help you get started.</span>
+                Other Resources
               </button>
-
             </div>
           </div>
         )}

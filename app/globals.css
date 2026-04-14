@@ -932,72 +932,62 @@ body::after {
 }
 
 /* ── RESULTS PICKER ── */
+
+/* Full-width layout when no sidebar */
+.results-layout-picker {
+  grid-template-columns: 1fr;
+}
+
+.results-main-picker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 56px);
+  padding: 3rem;
+}
+
 .results-picker {
-  padding: 1rem 0 2rem;
+  width: 100%;
+  max-width: 560px;
+  text-align: center;
 }
 
 .results-picker-heading {
   font-family: 'Playfair Display', serif;
-  font-size: 1.35rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: var(--ink);
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
   letter-spacing: -0.01em;
 }
 
 .results-picker-cards {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .picker-card {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.6rem;
-  padding: 1.75rem 1.5rem;
+  width: 100%;
+  padding: 1.1rem 2rem;
   background: white;
   border: 1px solid var(--rule);
-  border-top: 3px solid transparent;
-  border-radius: 4px;
+  border-left: 3px solid transparent;
+  border-radius: 3px;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--ink);
   text-align: left;
   cursor: pointer;
-  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+  transition: border-color 0.15s, box-shadow 0.15s, color 0.15s;
 }
 
 .picker-card:hover {
-  border-top-color: #BA0C2F;
-  box-shadow: 0 4px 20px rgba(28,26,23,0.08);
-  transform: translateY(-2px);
-}
-
-.picker-card-icon {
-  font-size: 1.75rem;
-  line-height: 1;
-}
-
-.picker-card-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--ink);
-  line-height: 1.35;
-}
-
-.picker-card-count {
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  border-left-color: #BA0C2F;
+  box-shadow: 0 2px 12px rgba(28,26,23,0.07);
   color: #BA0C2F;
-}
-
-.picker-card-desc {
-  font-size: 0.82rem;
-  color: var(--muted);
-  line-height: 1.6;
-  font-weight: 400;
 }
 
 /* ── RESULTS TABS ── */
