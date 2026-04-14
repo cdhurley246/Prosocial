@@ -261,6 +261,14 @@ body::after {
 
 .home-chat .chat-msg-text {
   color: rgba(255,255,255,0.9);
+  font-size: 1.05rem;
+  font-weight: 400;
+  line-height: 1.75;
+}
+
+.home-chat .chat-msg-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.07em;
 }
 
 .home-chat .chat-input-row {
@@ -272,6 +280,9 @@ body::after {
   background: #215732;
   color: rgba(255,255,255,0.9);
   caret-color: #B5E3D8;
+  font-size: 1rem;
+  font-weight: 400;
+  padding: 1.1rem 1.25rem;
 }
 
 .home-chat .chat-input::placeholder {
@@ -325,8 +336,7 @@ body::after {
   max-width: 1000px;
   border-radius: 6px;
   overflow: hidden;
-  /* hairline mint accent — top and sides only */
-  padding: 0.3rem 0.3rem 0 !important;
+  padding: 0.3rem !important;
 }
 
 /* tall chat window on /home */
