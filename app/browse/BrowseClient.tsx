@@ -171,6 +171,7 @@ export default function BrowseClient({ orgs }: Props) {
           options={issueOptions}
           selected={selectedIssues}
           onToggle={val => toggle(selectedIssues, val, setSelectedIssues)}
+          formatOption={toLabel}
         />
 
         {/* ── Clear all ── */}
