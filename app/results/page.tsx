@@ -189,9 +189,15 @@ function ResultsContent() {
   const [loading, setLoading]     = useState(true)
   const [error, setError]         = useState('')
   const [activeTab, setActiveTab] = useState<Tab>('orgs')
+  const [hasChosen, setHasChosen] = useState(false)
   const [chatMessages, setChatMessages] = useState<Message[]>([])
   const [chatOpen, setChatOpen]   = useState(false)
   const [selectedStates, setSelectedStates] = useState<Set<string>>(new Set())
+
+  function chooseTab(tab: Tab) {
+    setActiveTab(tab)
+    setHasChosen(true)
+  }
 
   useEffect(() => {
     try {
@@ -366,86 +372,119 @@ function ResultsContent() {
       {/* ── MAIN ── */}
       <main className="results-main">
 
-        {/* Tab bar */}
-        <div className="results-tabs">
-          {(['orgs', 'docs', 'resources'] as Tab[]).map(tab => (
-            <button
-              key={tab}
-              className={`results-tab${activeTab === tab ? ' results-tab-active' : ''}`}
-              onClick={() => setActiveTab(tab)}
-            >
-              {TAB_LABELS[tab]}
-              {!loading && tabCounts[tab] > 0 && (
-                <span className="results-tab-count">{tabCounts[tab]}</span>
-              )}
-            </button>
-          ))}
-        </div>
-
         {/* Loading / error */}
         {loading && <div className="loading-state">Finding your matches…</div>}
         {error   && <div className="error-state">{error}</div>}
 
-        {/* ── Organizations tab ── */}
-        {!loading && !error && activeTab === 'orgs' && (
-          <>
-            <div className="results-header">
-              <h2 className="results-heading">Similar Organizations</h2>
-              <span className="results-count">{orgs.length} results</span>
+        {/* ── PICKER — shown before user chooses a category ── */}
+        {!loading && !error && !hasChosen && (
+          <div className="results-picker">
+            <p className="results-picker-heading">Your results are ready. What would you like to see first?</p>
+            <div className="results-picker-cards">
+
+              <button className="picker-card" onClick={() => chooseTab('docs')}>
+                <span className="picker-card-icon">📄</span>
+                <span className="picker-card-title">Legal Document Templates & Examples</span>
+                <span className="picker-card-count">{documents.length} matched</span>
+                <span className="picker-card-desc">Bylaws, operating agreements, and legal guides relevant to your organization type.</span>
+              </button>
+
+              <button className="picker-card" onClick={() => chooseTab('orgs')}>
+                <span className="picker-card-icon">🏛</span>
+                <span className="picker-card-title">Organizations Similar to Yours</span>
+                <span className="picker-card-count">{orgs.length} matched</span>
+                <span className="picker-card-desc">Real organizations with similar missions, structures, and issue areas.</span>
+              </button>
+
+              <button className="picker-card" onClick={() => chooseTab('resources')}>
+                <span className="picker-card-icon">🔗</span>
+                <span className="picker-card-title">Other Resources</span>
+                <span className="picker-card-count">{resources.length} matched</span>
+                <span className="picker-card-desc">Guides, tools, and external organizations that can help you get started.</span>
+              </button>
+
             </div>
-            {orgs.length === 0 ? (
-              <p className="results-empty">No organizations matched — try clearing the state filter.</p>
-            ) : (
-              orgs.map(org => (
-                <OrgCard key={org.id} org={org} score={normalize(org.similarity)} />
-              ))
-            )}
-          </>
+          </div>
         )}
 
-        {/* ── Templates & Documents tab ── */}
-        {!loading && !error && activeTab === 'docs' && (
+        {/* ── TAB BAR — shown after user picks ── */}
+        {!loading && !error && hasChosen && (
           <>
-            <div className="results-header">
-              <h2 className="results-heading">Templates & Documents</h2>
-              <span className="results-count">{documents.length} results</span>
+            <div className="results-tabs">
+              {(['docs', 'orgs', 'resources'] as Tab[]).map(tab => (
+                <button
+                  key={tab}
+                  className={`results-tab${activeTab === tab ? ' results-tab-active' : ''}`}
+                  onClick={() => setActiveTab(tab)}
+                >
+                  {TAB_LABELS[tab]}
+                  {tabCounts[tab] > 0 && (
+                    <span className="results-tab-count">{tabCounts[tab]}</span>
+                  )}
+                </button>
+              ))}
             </div>
-            {documents.length === 0 ? (
-              <p className="results-empty">No matching documents found.</p>
-            ) : (
-              <div className="resource-card-list">
-                {documents.map(doc => (
-                  <DocCard key={doc.id} doc={doc} />
-                ))}
-              </div>
-            )}
-            <p className="results-browse-link">
-              Browse all templates →{' '}
-              <Link href="/legal-docs">Legal Documents Library</Link>
-            </p>
-          </>
-        )}
 
-        {/* ── Resources tab ── */}
-        {!loading && !error && activeTab === 'resources' && (
-          <>
-            <div className="results-header">
-              <h2 className="results-heading">Helpful Resources</h2>
-              <span className="results-count">{resources.length} results</span>
-            </div>
-            {resources.length === 0 ? (
-              <p className="results-empty">No resources matched your profile.</p>
-            ) : (
-              <div className="resource-card-list">
-                {resources.map(res => (
-                  <ResourceCard key={res.id} res={res} />
-                ))}
-              </div>
+            {/* Organizations tab */}
+            {activeTab === 'orgs' && (
+              <>
+                <div className="results-header">
+                  <h2 className="results-heading">Similar Organizations</h2>
+                  <span className="results-count">{orgs.length} results</span>
+                </div>
+                {orgs.length === 0 ? (
+                  <p className="results-empty">No organizations matched — try clearing the state filter.</p>
+                ) : (
+                  orgs.map(org => (
+                    <OrgCard key={org.id} org={org} score={normalize(org.similarity)} />
+                  ))
+                )}
+              </>
             )}
-            <p className="results-browse-link">
-              Browse all resources →{' '}
-              <Link href="/resources">Resource Center</Link>
-            </p>
+
+            {/* Templates & Documents tab */}
+            {activeTab === 'docs' && (
+              <>
+                <div className="results-header">
+                  <h2 className="results-heading">Templates & Documents</h2>
+                  <span className="results-count">{documents.length} results</span>
+                </div>
+                {documents.length === 0 ? (
+                  <p className="results-empty">No matching documents found.</p>
+                ) : (
+                  <div className="resource-card-list">
+                    {documents.map(doc => (
+                      <DocCard key={doc.id} doc={doc} />
+                    ))}
+                  </div>
+                )}
+                <p className="results-browse-link">
+                  Browse all templates → <Link href="/legal-docs">Legal Documents Library</Link>
+                </p>
+              </>
+            )}
+
+            {/* Resources tab */}
+            {activeTab === 'resources' && (
+              <>
+                <div className="results-header">
+                  <h2 className="results-heading">Helpful Resources</h2>
+                  <span className="results-count">{resources.length} results</span>
+                </div>
+                {resources.length === 0 ? (
+                  <p className="results-empty">No resources matched your profile.</p>
+                ) : (
+                  <div className="resource-card-list">
+                    {resources.map(res => (
+                      <ResourceCard key={res.id} res={res} />
+                    ))}
+                  </div>
+                )}
+                <p className="results-browse-link">
+                  Browse all resources → <Link href="/resources">Resource Center</Link>
+                </p>
+              </>
+            )}
           </>
         )}
       </main>
