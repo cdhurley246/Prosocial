@@ -244,6 +244,7 @@ body::after {
 .home-chat .chat-window {
   background: #215732;
   border-color: rgba(181,227,216,0.15);
+  border-bottom: none;
 }
 
 .home-chat .chat-window::-webkit-scrollbar-thumb {
@@ -263,6 +264,7 @@ body::after {
 }
 
 .home-chat .chat-input-row {
+  background: #215732;
   border-color: rgba(181,227,216,0.15);
 }
 
@@ -306,7 +308,7 @@ body::after {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1.5rem 1.5rem 2rem;
+  padding: 1rem 2rem 2rem;
   min-height: calc(100vh - 56px);
 }
 
@@ -314,23 +316,23 @@ body::after {
   font-size: 0.82rem;
   color: var(--muted);
   letter-spacing: 0.03em;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   text-align: center;
 }
 
 .chat-page-window {
   width: 100%;
-  max-width: 900px;
+  max-width: 1000px;
   border-radius: 6px;
   overflow: hidden;
-  /* thin mint strip on top and sides only — input row sits flush at bottom */
-  padding: 0.6rem 0.6rem 0 !important;
+  /* hairline mint accent — top and sides only */
+  padding: 0.3rem 0.3rem 0 !important;
 }
 
-/* taller chat window when used on the /home page */
+/* tall chat window on /home */
 .chat-page-window .chat-window {
-  min-height: 380px;
-  max-height: 520px;
+  min-height: 480px;
+  max-height: calc(100vh - 200px);
 }
 
 /* ── HOME ── */
