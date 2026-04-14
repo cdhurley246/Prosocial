@@ -86,6 +86,7 @@ interface Org {
   phone: string | null
   source: string | null
   verified: boolean
+  is_demo: boolean
   documents: Document[]
   enrichment: CrawlEnrichment | null
 }
@@ -151,6 +152,22 @@ export default async function OrgPage({ params }: { params: Promise<{ slug: stri
     <>
       <Nav />
 
+      {/* ── DEMO BANNER ── */}
+      {org.is_demo && (
+        <div style={{
+          background: 'rgba(180,90,0,0.1)',
+          borderBottom: '2px solid rgba(180,90,0,0.3)',
+          padding: '10px 24px',
+          textAlign: 'center',
+          fontSize: '0.85rem',
+          color: '#b45a00',
+          fontWeight: 600,
+          letterSpacing: '0.03em',
+        }}>
+          DEMO ONLY — This organization is fictional and was created for demonstration purposes.
+        </div>
+      )}
+
       {/* ── ORG HEADER BANNER ── */}
       <header className="org-header">
         <div className="org-header-meta">
@@ -161,6 +178,9 @@ export default async function OrgPage({ params }: { params: Promise<{ slug: stri
             ))}
             {org.verified && (
               <span className="tag tag-verified">✓ Verified</span>
+            )}
+            {org.is_demo && (
+              <span className="tag tag-demo">DEMO</span>
             )}
           </div>
         </div>

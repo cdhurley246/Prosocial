@@ -17,6 +17,7 @@ interface OrgResult {
   website: string | null
   ntee_code: string | null
   similarity: number
+  is_demo: boolean
 }
 
 interface DocResult {
@@ -268,7 +269,10 @@ function ResultsContent() {
               {results.map(org => (
                 <Link key={org.id} href={`/orgs/${org.slug}`} className="result-card">
                   <div>
-                    <div className="result-name">{org.name}</div>
+                    <div className="result-name">
+                      {org.name}
+                      {org.is_demo && <span className="tag tag-demo" style={{ marginLeft: 8, verticalAlign: 'middle' }}>DEMO</span>}
+                    </div>
                     {(org.mission || org.description) && (
                       <p className="result-mission">
                         {(org.mission || org.description || '').slice(0, 200)}

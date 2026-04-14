@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
       ? await sql`
           SELECT
             o.id, o.slug, o.name, o.mission, o.description,
-            o.org_types, o.issue_areas, o.city, o.state, o.website, o.ntee_code,
+            o.org_types, o.issue_areas, o.city, o.state, o.website, o.ntee_code, o.is_demo,
             1 - (oe.embedding <=> ${embeddingStr}::vector) as similarity
           FROM orgs o
           JOIN org_embeddings oe ON o.id = oe.org_id
@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
       : await sql`
           SELECT
             o.id, o.slug, o.name, o.mission, o.description,
-            o.org_types, o.issue_areas, o.city, o.state, o.website, o.ntee_code,
+            o.org_types, o.issue_areas, o.city, o.state, o.website, o.ntee_code, o.is_demo,
             1 - (oe.embedding <=> ${embeddingStr}::vector) as similarity
           FROM orgs o
           JOIN org_embeddings oe ON o.id = oe.org_id

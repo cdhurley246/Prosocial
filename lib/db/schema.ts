@@ -54,6 +54,7 @@ export const orgs = pgTable('orgs', {
   source:           text('source'),
   external_id:      text('external_id'),
   verified:         boolean('verified').default(false),
+  is_demo:          boolean('is_demo').default(false),
 
   // Common Crawl enrichment
   crawl_coverage:   text('crawl_coverage'),

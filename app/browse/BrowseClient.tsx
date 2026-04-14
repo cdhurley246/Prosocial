@@ -11,6 +11,7 @@ interface Org {
   issue_areas: string[] | null
   city: string | null
   state: string | null
+  is_demo: boolean
 }
 
 interface Props {
@@ -247,7 +248,10 @@ export default function BrowseClient({ orgs }: Props) {
               {group.map(org => (
                 <Link key={org.id} href={`/orgs/${org.slug}`} className="browse-card">
                   <div className="browse-card-body">
-                    <div className="result-name">{org.name}</div>
+                    <div className="result-name">
+                      {org.name}
+                      {org.is_demo && <span className="tag tag-demo" style={{ marginLeft: 8, verticalAlign: 'middle' }}>DEMO</span>}
+                    </div>
                     {org.mission && (
                       <p className="result-mission">
                         {org.mission.slice(0, 160)}{org.mission.length > 160 ? '…' : ''}

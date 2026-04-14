@@ -816,6 +816,7 @@ body::after {
 .tag-green { background: rgba(58,84,54,0.1); color: var(--moss); }
 .tag-red   { background: rgba(165,20,23,0.08); color: var(--red); }
 .tag-warm  { background: rgba(28,26,23,0.07); color: var(--ink); }
+.tag-demo  { background: rgba(180,90,0,0.12); color: #b45a00; font-weight: 700; letter-spacing: 0.04em; }
 
 /* Refine section */
 .refine-section {
