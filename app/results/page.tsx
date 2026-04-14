@@ -4,6 +4,8 @@ import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Nav from '@/components/Nav'
 
+// ── Types ──────────────────────────────────────────────────────────────────
+
 interface OrgResult {
   id: string
   slug: string
@@ -29,6 +31,17 @@ interface DocResult {
   source_name: string
 }
 
+interface ResourceResult {
+  id: string
+  title: string
+  url: string
+  description: string | null
+  resource_type: string | null
+  relevant_org_types: string[] | null
+  issue_areas: string[] | null
+  is_local: boolean
+}
+
 interface Profile {
   org_name?: string | null
   org_types?: string[]
@@ -43,6 +56,123 @@ interface Message {
   content: string
 }
 
+type Tab = 'orgs' | 'docs' | 'resources'
+
+// ── Midwest states for filter ───────────────────────────────────────────────
+
+const MIDWEST_STATES = [
+  { code: 'IL', label: 'Illinois' },
+  { code: 'MO', label: 'Missouri' },
+  { code: 'WI', label: 'Wisconsin' },
+  { code: 'MN', label: 'Minnesota' },
+  { code: 'OH', label: 'Ohio' },
+  { code: 'MI', label: 'Michigan' },
+  { code: 'IN', label: 'Indiana' },
+  { code: 'IA', label: 'Iowa' },
+]
+
+// ── Sub-components ─────────────────────────────────────────────────────────
+
+function OrgCard({ org, score }: { org: OrgResult; score: number }) {
+  return (
+    <Link href={`/orgs/${org.slug}`} className="result-card">
+      <div>
+        <div className="result-name">
+          {org.name}
+          {org.is_demo && (
+            <span className="tag tag-demo" style={{ marginLeft: 8, verticalAlign: 'middle' }}>
+              DEMO
+            </span>
+          )}
+        </div>
+        {(org.mission || org.description) && (
+          <p className="result-mission">
+            {(org.mission || org.description || '').slice(0, 200)}
+            {(org.mission || org.description || '').length > 200 ? '…' : ''}
+          </p>
+        )}
+        <div className="result-meta">
+          {org.org_types?.map(t => (
+            <span key={t} className="tag tag-green">{t.replace(/_/g, ' ')}</span>
+          ))}
+          {org.issue_areas?.slice(0, 3).map(a => (
+            <span key={a} className="tag tag-red">{a.replace(/_/g, ' ')}</span>
+          ))}
+          {(org.city || org.state) && (
+            <span className="result-location">
+              {[org.city, org.state].filter(Boolean).join(', ')}
+            </span>
+          )}
+        </div>
+      </div>
+      <div className="match-badge">
+        <div className="match-pct">{score}%</div>
+        <div className="match-lbl">Match</div>
+      </div>
+    </Link>
+  )
+}
+
+function DocCard({ doc }: { doc: DocResult }) {
+  return (
+    <a
+      href={doc.file_url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="resource-card"
+    >
+      <div className="resource-card-icon">📄</div>
+      <div className="resource-card-body">
+        <div className="resource-card-title">{doc.title}</div>
+        <div className="resource-card-meta">
+          <span className="tag tag-green">{doc.doc_type.replace(/_/g, ' ')}</span>
+          <span className="resource-card-source">{doc.source_name}</span>
+        </div>
+        {doc.notable_clauses && doc.notable_clauses.length > 0 && (
+          <ul className="resource-card-clauses">
+            {doc.notable_clauses.slice(0, 2).map((c, i) => (
+              <li key={i}>{c}</li>
+            ))}
+          </ul>
+        )}
+      </div>
+      <span className="resource-card-cta">View PDF →</span>
+    </a>
+  )
+}
+
+function ResourceCard({ res }: { res: ResourceResult }) {
+  return (
+    <a
+      href={res.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="resource-card"
+    >
+      <div className="resource-card-icon">🔗</div>
+      <div className="resource-card-body">
+        <div className="resource-card-title">{res.title}</div>
+        <div className="resource-card-meta">
+          {res.resource_type && (
+            <span className="tag tag-warm">{res.resource_type.replace(/_/g, ' ')}</span>
+          )}
+          {res.is_local && (
+            <span className="tag tag-green">Local</span>
+          )}
+        </div>
+        {res.description && (
+          <p className="resource-card-desc">
+            {res.description.slice(0, 140)}{res.description.length > 140 ? '…' : ''}
+          </p>
+        )}
+      </div>
+      <span className="resource-card-cta">Visit →</span>
+    </a>
+  )
+}
+
+// ── Main component ─────────────────────────────────────────────────────────
+
 function ResultsContent() {
   const searchParams = useSearchParams()
   const query = searchParams.get('q') || ''
@@ -53,24 +183,14 @@ function ResultsContent() {
     if (p) profile = JSON.parse(p)
   } catch {}
 
-  const MIDWEST_STATES = [
-    { code: 'IL', label: 'Illinois' },
-    { code: 'MO', label: 'Missouri' },
-    { code: 'WI', label: 'Wisconsin' },
-    { code: 'MN', label: 'Minnesota' },
-    { code: 'OH', label: 'Ohio' },
-    { code: 'MI', label: 'Michigan' },
-    { code: 'IN', label: 'Indiana' },
-    { code: 'IA', label: 'Iowa' },
-  ]
-
-  const [results, setResults] = useState<OrgResult[]>([])
+  const [orgs, setOrgs]           = useState<OrgResult[]>([])
   const [documents, setDocuments] = useState<DocResult[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
+  const [resources, setResources] = useState<ResourceResult[]>([])
+  const [loading, setLoading]     = useState(true)
+  const [error, setError]         = useState('')
+  const [activeTab, setActiveTab] = useState<Tab>('orgs')
   const [chatMessages, setChatMessages] = useState<Message[]>([])
-  const [chatOpen, setChatOpen] = useState(false)
-  // Empty set = no filter (all states). Non-empty = show only selected.
+  const [chatOpen, setChatOpen]   = useState(false)
   const [selectedStates, setSelectedStates] = useState<Set<string>>(new Set())
 
   useEffect(() => {
@@ -81,39 +201,60 @@ function ResultsContent() {
   }, [])
 
   useEffect(() => {
-    if (!query) {
-      setLoading(false)
-      return
-    }
+    if (!query) { setLoading(false); return }
     setLoading(true)
     setError('')
     const states = selectedStates.size > 0 ? Array.from(selectedStates) : undefined
     fetch('/api/match', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query, limit: 8, states }),
+      body: JSON.stringify({ query, limit: 8, states, profile }),
     })
       .then(r => r.json())
       .then(data => {
-        if (data.error) setError(data.error)
-        else {
-          setResults(data.results || [])
+        if (data.error) {
+          setError(data.error)
+        } else {
+          setOrgs(data.results || [])
           setDocuments(data.documents || [])
+          setResources(data.resources || [])
         }
       })
       .catch(() => setError('Something went wrong'))
       .finally(() => setLoading(false))
   }, [query, selectedStates])
 
-  const orgTypes = profile?.org_types || []
+  // Normalise similarity scores to 65–100 range
+  const scores = orgs.map(r => r.similarity)
+  const minS = Math.min(...scores)
+  const maxS = Math.max(...scores)
+  const range = maxS - minS
+  const normalize = (s: number) =>
+    range < 0.001 ? 95 : Math.round(65 + ((s - minS) / range) * 35)
+
+  const orgTypes   = profile?.org_types   || []
   const issueAreas = profile?.issue_areas || []
   const primaryNeed = profile?.primary_need
   const stage = profile?.stage
 
+  const tabCounts: Record<Tab, number> = {
+    orgs:      orgs.length,
+    docs:      documents.length,
+    resources: resources.length,
+  }
+
+  const TAB_LABELS: Record<Tab, string> = {
+    orgs:      'Organizations',
+    docs:      'Templates & Documents',
+    resources: 'Resources',
+  }
+
   return (
     <div className="results-layout">
+
+      {/* ── SIDEBAR ── */}
       <aside className="results-sidebar">
-        <Link href="/" className="back-link">← Back to Search</Link>
+        <Link href="/home" className="back-link">← Back to Search</Link>
 
         {profile && (
           <>
@@ -124,9 +265,7 @@ function ResultsContent() {
                   <strong>Organization Type</strong>
                   <div className="tag-list">
                     {orgTypes.map(t => (
-                      <span key={t} className="tag tag-green">
-                        {t.replace(/_/g, ' ')}
-                      </span>
+                      <span key={t} className="tag tag-green">{t.replace(/_/g, ' ')}</span>
                     ))}
                   </div>
                 </div>
@@ -135,9 +274,7 @@ function ResultsContent() {
                 <div className="profile-row">
                   <strong>Primary Need</strong>
                   <div className="tag-list">
-                    <span className="tag tag-red">
-                      {primaryNeed.replace(/_/g, ' ')}
-                    </span>
+                    <span className="tag tag-red">{primaryNeed.replace(/_/g, ' ')}</span>
                   </div>
                 </div>
               )}
@@ -146,7 +283,7 @@ function ResultsContent() {
                   <strong>Issue Areas</strong>
                   <div className="tag-list">
                     {issueAreas.map(a => (
-                      <span key={a} className="tag tag-green">{a}</span>
+                      <span key={a} className="tag tag-green">{a.replace(/_/g, ' ')}</span>
                     ))}
                   </div>
                 </div>
@@ -163,53 +300,44 @@ function ResultsContent() {
           </>
         )}
 
-        <div className="refine-section">
-          <p className="sidebar-label">Refine Search</p>
-          <div className="refine-filters">
-            <label className="filter-label">
-              <input type="checkbox" defaultChecked readOnly /> Worker Co-ops
-            </label>
-            <div className="filter-divider" />
-            <p style={{ fontSize: '0.72rem', color: 'var(--muted)', marginBottom: 6, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-              State {selectedStates.size > 0 && <span style={{ color: 'var(--red)' }}>({selectedStates.size} selected)</span>}
-            </p>
-            {MIDWEST_STATES.map(({ code, label }) => (
-              <label key={code} className="filter-label">
-                <input
-                  type="checkbox"
-                  checked={selectedStates.has(code)}
-                  onChange={e => {
-                    setSelectedStates(prev => {
-                      const next = new Set(prev)
-                      if (e.target.checked) next.add(code)
-                      else next.delete(code)
-                      return next
-                    })
+        {/* State filter — only relevant for orgs tab */}
+        {activeTab === 'orgs' && (
+          <div className="refine-section">
+            <p className="sidebar-label">Filter by State</p>
+            <div className="refine-filters">
+              {MIDWEST_STATES.map(({ code, label }) => (
+                <label key={code} className="filter-label">
+                  <input
+                    type="checkbox"
+                    checked={selectedStates.has(code)}
+                    onChange={e => {
+                      setSelectedStates(prev => {
+                        const next = new Set(prev)
+                        e.target.checked ? next.add(code) : next.delete(code)
+                        return next
+                      })
+                    }}
+                  />
+                  {' '}{label}
+                </label>
+              ))}
+              {selectedStates.size > 0 && (
+                <button
+                  onClick={() => setSelectedStates(new Set())}
+                  style={{
+                    marginTop: 6, fontSize: '0.72rem', color: 'var(--red)',
+                    background: 'none', border: 'none', cursor: 'pointer',
+                    padding: 0, textAlign: 'left',
                   }}
-                />
-                {' '}{label}
-              </label>
-            ))}
-            {selectedStates.size > 0 && (
-              <button
-                onClick={() => setSelectedStates(new Set())}
-                style={{
-                  marginTop: 6,
-                  fontSize: '0.72rem',
-                  color: 'var(--red)',
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: 0,
-                  textAlign: 'left',
-                }}
-              >
-                Clear filter
-              </button>
-            )}
+                >
+                  Clear filter
+                </button>
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
+        {/* Chat history */}
         {chatMessages.length > 0 && (
           <div className="chat-history">
             <button
@@ -235,140 +363,91 @@ function ResultsContent() {
         )}
       </aside>
 
+      {/* ── MAIN ── */}
       <main className="results-main">
-        <div className="results-header">
-          <h2 className="results-heading">Similar Organizations</h2>
-          {!loading && !error && (
-            <span className="results-count">{results.length} results</span>
-          )}
+
+        {/* Tab bar */}
+        <div className="results-tabs">
+          {(['orgs', 'docs', 'resources'] as Tab[]).map(tab => (
+            <button
+              key={tab}
+              className={`results-tab${activeTab === tab ? ' results-tab-active' : ''}`}
+              onClick={() => setActiveTab(tab)}
+            >
+              {TAB_LABELS[tab]}
+              {!loading && tabCounts[tab] > 0 && (
+                <span className="results-tab-count">{tabCounts[tab]}</span>
+              )}
+            </button>
+          ))}
         </div>
 
-        {loading && (
-          <div className="loading-state">Finding similar organizations…</div>
+        {/* Loading / error */}
+        {loading && <div className="loading-state">Finding your matches…</div>}
+        {error   && <div className="error-state">{error}</div>}
+
+        {/* ── Organizations tab ── */}
+        {!loading && !error && activeTab === 'orgs' && (
+          <>
+            <div className="results-header">
+              <h2 className="results-heading">Similar Organizations</h2>
+              <span className="results-count">{orgs.length} results</span>
+            </div>
+            {orgs.length === 0 ? (
+              <p className="results-empty">No organizations matched — try clearing the state filter.</p>
+            ) : (
+              orgs.map(org => (
+                <OrgCard key={org.id} org={org} score={normalize(org.similarity)} />
+              ))
+            )}
+          </>
         )}
 
-        {error && (
-          <div className="error-state">{error}</div>
+        {/* ── Templates & Documents tab ── */}
+        {!loading && !error && activeTab === 'docs' && (
+          <>
+            <div className="results-header">
+              <h2 className="results-heading">Templates & Documents</h2>
+              <span className="results-count">{documents.length} results</span>
+            </div>
+            {documents.length === 0 ? (
+              <p className="results-empty">No matching documents found.</p>
+            ) : (
+              <div className="resource-card-list">
+                {documents.map(doc => (
+                  <DocCard key={doc.id} doc={doc} />
+                ))}
+              </div>
+            )}
+            <p className="results-browse-link">
+              Browse all templates →{' '}
+              <Link href="/legal-docs">Legal Documents Library</Link>
+            </p>
+          </>
         )}
 
-        {!loading && !error && (() => {
-          // Min-max normalize scores so the spread is legible
-          const scores = results.map(r => r.similarity)
-          const minS = Math.min(...scores)
-          const maxS = Math.max(...scores)
-          const range = maxS - minS
-
-          const normalize = (s: number) => {
-            if (range < 0.001) return 95 // all identical — show 95%
-            // Map to 65–100 range so even last place shows a reasonable score
-            return Math.round(65 + ((s - minS) / range) * 35)
-          }
-
-          return (
-            <>
-              {results.map(org => (
-                <Link key={org.id} href={`/orgs/${org.slug}`} className="result-card">
-                  <div>
-                    <div className="result-name">
-                      {org.name}
-                      {org.is_demo && <span className="tag tag-demo" style={{ marginLeft: 8, verticalAlign: 'middle' }}>DEMO</span>}
-                    </div>
-                    {(org.mission || org.description) && (
-                      <p className="result-mission">
-                        {(org.mission || org.description || '').slice(0, 200)}
-                        {(org.mission || org.description || '').length > 200 ? '…' : ''}
-                      </p>
-                    )}
-                    <div className="result-meta">
-                      {org.org_types?.map(t => (
-                        <span key={t} className="tag tag-green">{t}</span>
-                      ))}
-                      {org.issue_areas?.map(a => (
-                        <span key={a} className="tag tag-red">{a}</span>
-                      ))}
-                      {(org.city || org.state) && (
-                        <span className="result-location">
-                          {[org.city, org.state].filter(Boolean).join(', ')}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <div className="match-badge">
-                    <div className="match-pct">{normalize(org.similarity)}%</div>
-                    <div className="match-lbl">Match</div>
-                  </div>
-                </Link>
-              ))}
-
-              {documents.length > 0 && (
-                <div style={{ marginTop: 40 }}>
-                  <h3 style={{
-                    fontFamily: 'var(--font-display, serif)',
-                    fontSize: '1.1rem',
-                    marginBottom: 16,
-                    paddingBottom: 12,
-                    borderBottom: '1px solid var(--rule)',
-                    color: 'var(--ink)',
-                  }}>
-                    Relevant Documents & Templates
-                  </h3>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                    {documents.map(doc => (
-                      <a
-                        key={doc.id}
-                        href={doc.file_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                          padding: '14px 18px',
-                          border: '1px solid var(--rule)',
-                          borderRadius: 4,
-                          textDecoration: 'none',
-                          background: 'white',
-                          transition: 'border-color 0.15s, box-shadow 0.15s',
-                        }}
-                        onMouseEnter={e => {
-                          (e.currentTarget as HTMLElement).style.borderColor = 'rgba(165,20,23,0.3)'
-                          ;(e.currentTarget as HTMLElement).style.boxShadow = '0 2px 8px rgba(28,26,23,0.06)'
-                        }}
-                        onMouseLeave={e => {
-                          (e.currentTarget as HTMLElement).style.borderColor = 'var(--rule)'
-                          ;(e.currentTarget as HTMLElement).style.boxShadow = 'none'
-                        }}
-                      >
-                        <div>
-                          <div style={{
-                            fontSize: '0.9rem',
-                            fontWeight: 500,
-                            color: 'var(--ink)',
-                            marginBottom: 3
-                          }}>
-                            {doc.title}
-                          </div>
-                          <div style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>
-                            {doc.source_name} · {doc.doc_type.replace(/_/g, ' ')}
-                          </div>
-                        </div>
-                        <span style={{
-                          fontSize: '0.78rem',
-                          color: 'var(--red)',
-                          marginLeft: 16,
-                          whiteSpace: 'nowrap',
-                          fontWeight: 500,
-                        }}>
-                          View PDF →
-                        </span>
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </>
-          )
-        })()}
+        {/* ── Resources tab ── */}
+        {!loading && !error && activeTab === 'resources' && (
+          <>
+            <div className="results-header">
+              <h2 className="results-heading">Helpful Resources</h2>
+              <span className="results-count">{resources.length} results</span>
+            </div>
+            {resources.length === 0 ? (
+              <p className="results-empty">No resources matched your profile.</p>
+            ) : (
+              <div className="resource-card-list">
+                {resources.map(res => (
+                  <ResourceCard key={res.id} res={res} />
+                ))}
+              </div>
+            )}
+            <p className="results-browse-link">
+              Browse all resources →{' '}
+              <Link href="/resources">Resource Center</Link>
+            </p>
+          </>
+        )}
       </main>
     </div>
   )
@@ -378,7 +457,6 @@ export default function ResultsPage() {
   return (
     <>
       <Nav />
-
       <Suspense fallback={<div className="loading-state">Loading…</div>}>
         <ResultsContent />
       </Suspense>

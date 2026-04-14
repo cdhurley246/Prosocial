@@ -25,7 +25,7 @@ async function generateQueryEmbedding(query: string): Promise<number[]> {
 }
 
 export async function POST(req: NextRequest) {
-  const { query, limit = 5, states } = await req.json()
+  const { query, limit = 5, states, profile } = await req.json()
 
   if (!query) {
     return Response.json({ error: 'Query is required' }, { status: 400 })
@@ -36,6 +36,7 @@ export async function POST(req: NextRequest) {
     const embedding = await generateQueryEmbedding(query)
     const embeddingStr = JSON.stringify(embedding)
 
+    // ── Org results (vector similarity) ──────────────────────────────────
     const results = (states?.length)
       ? await sql`
           SELECT
@@ -61,7 +62,8 @@ export async function POST(req: NextRequest) {
           LIMIT ${limit}
         `
 
-    const docResults = await sql`
+    // ── Document results (vector similarity) ─────────────────────────────
+    const documents = await sql`
       SELECT
         d.id,
         d.title,
@@ -75,10 +77,53 @@ export async function POST(req: NextRequest) {
       WHERE d.is_public = true
         AND d.deleted_at IS NULL
       ORDER BY de.embedding <=> ${embeddingStr}::vector
-      LIMIT 4
+      LIMIT 6
     `
 
-    return Response.json({ results, documents: docResults })
+    // ── Resource results (issue_area + org_type overlap) ─────────────────
+    // Resources don't have embeddings, so we rank by overlap with the
+    // profile's issue_areas and org_types, falling back to all resources.
+    const profileIssues: string[] = profile?.issue_areas ?? []
+    const profileTypes: string[]  = profile?.org_types  ?? []
+
+    let resources
+    if (profileIssues.length > 0 || profileTypes.length > 0) {
+      resources = await sql`
+        SELECT
+          id, title, url, description, resource_type,
+          relevant_org_types, issue_areas, is_local
+        FROM resources
+        WHERE deleted_at IS NULL
+          AND (
+            issue_areas        && ${profileIssues}::text[]
+            OR relevant_org_types && ${profileTypes}::text[]
+          )
+        ORDER BY
+          (
+            COALESCE(array_length(
+              ARRAY(SELECT unnest(issue_areas) INTERSECT SELECT unnest(${profileIssues}::text[])),
+              1
+            ), 0)
+            +
+            COALESCE(array_length(
+              ARRAY(SELECT unnest(relevant_org_types) INTERSECT SELECT unnest(${profileTypes}::text[])),
+              1
+            ), 0)
+          ) DESC
+        LIMIT 6
+      `
+    } else {
+      // No profile — return a broad set
+      resources = await sql`
+        SELECT id, title, url, description, resource_type,
+               relevant_org_types, issue_areas, is_local
+        FROM resources
+        WHERE deleted_at IS NULL
+        LIMIT 6
+      `
+    }
+
+    return Response.json({ results, documents, resources })
   } catch (err) {
     console.error('Match error:', err)
     return Response.json({ error: 'Match failed' }, { status: 500 })
