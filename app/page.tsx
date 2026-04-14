@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 const lines = [
   { type: 'title',    text: 'Welcome to Prosocial' },
-  { type: 'subtitle', text: 'A tool for socially-focused organizations and individuals in the St. Louis area.' },
+  { type: 'subtitle', text: 'A tool for socially-focused organizations and individuals\nin the St. Louis area.' },
   { type: 'body',     text: 'Use the chatbot on the next page to tell us about your organization or idea, and we will match you with helpful resources — including template legal documents, similar organizations, and more.' },
   { type: 'body',     text: 'After you have your resources, you can log in to connect with other organizations on the platform.' },
   { type: 'body',     text: 'When your project is ready, you can leave behind your legal documents and other information for the benefit of future change-makers.' },
@@ -111,7 +111,7 @@ export default function IntroPage() {
       <div className="intro-wrap">
         <div className="intro-inner">
           <h1 className="intro-title">{lines[0].text}</h1>
-          <p className="intro-subtitle">{lines[1].text}</p>
+          <p className="intro-subtitle" style={{ whiteSpace: 'pre-line' }}>{lines[1].text}</p>
           <hr className="intro-divider" />
           <p className="intro-body">{lines[2].text}</p>
           <p className="intro-body">{lines[3].text}</p>
