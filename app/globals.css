@@ -942,22 +942,23 @@ body::after {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   min-height: calc(100vh - 56px);
-  padding: 3rem;
+  padding: 4rem 3rem 3rem;
+  background: #BA0C2F;
 }
 
 .results-picker {
   width: 100%;
-  max-width: 1100px;
+  max-width: 1200px;
   text-align: center;
 }
 
 .results-picker-heading {
   font-family: 'Playfair Display', serif;
-  font-size: 1.6rem;
+  font-size: 1.9rem;
   font-weight: 700;
-  color: var(--ink);
+  color: white;
   margin-bottom: 3rem;
   letter-spacing: -0.01em;
 }
@@ -972,27 +973,25 @@ body::after {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 3rem 2rem;
+  padding: 4rem 2.5rem;
   background: white;
-  border: 1px solid var(--rule);
-  border-top: 4px solid transparent;
+  border: none;
   border-radius: 4px;
   font-family: 'Playfair Display', serif;
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: var(--ink);
   text-align: center;
   line-height: 1.4;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(28,26,23,0.05);
-  transition: border-color 0.15s, box-shadow 0.2s, color 0.15s, transform 0.15s;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  transition: box-shadow 0.2s, color 0.15s, transform 0.15s;
 }
 
 .picker-card:hover {
-  border-top-color: #BA0C2F;
-  box-shadow: 0 8px 32px rgba(28,26,23,0.1);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.2);
   color: #BA0C2F;
-  transform: translateY(-3px);
+  transform: translateY(-4px);
 }
 
 /* ── RESULTS TABS ── */
