@@ -370,7 +370,7 @@ function ResultsContent() {
       </aside>}
 
       {/* ── MAIN ── */}
-      <main className={hasChosen ? 'results-main' : 'results-main results-main-picker'}>
+      <main className={hasChosen ? 'results-main' : 'results-main-picker'}>
 
         {/* Loading / error */}
         {loading && <div className="loading-state">Finding your matches…</div>}
