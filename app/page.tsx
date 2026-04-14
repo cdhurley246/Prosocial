@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 const lines = [
   { type: 'title',    text: 'Welcome to Prosocial' },
-  { type: 'subtitle', text: 'A tool for socially-focused organizations and individuals.' },
+  { type: 'subtitle', text: 'A tool for socially-focused organizations and individuals in the St. Louis area.' },
   { type: 'body',     text: 'Use the chatbot on the next page to tell us about your organization or idea, and we will match you with helpful resources — including template legal documents, similar organizations, and more.' },
   { type: 'body',     text: 'After you have your resources, you can log in to connect with other organizations on the platform.' },
   { type: 'body',     text: 'When your project is ready, you can leave behind your legal documents and other information for the benefit of future change-makers.' },
