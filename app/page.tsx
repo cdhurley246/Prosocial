@@ -1,217 +1,126 @@
 'use client'
-import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
-import Nav from '@/components/Nav'
 
-interface Message {
-  role: 'user' | 'assistant'
-  content: string
-}
-
-const CHIPS = [
-  'Starting a co-op',
-  'Nonprofit bylaws',
-  'Finding funders',
-  'Governance help',
-  'Worker ownership',
-  'Housing co-op',
+const lines = [
+  { type: 'title',    text: 'Welcome to Prosocial' },
+  { type: 'subtitle', text: 'A tool for socially-focused organizations and individuals.' },
+  { type: 'body',     text: 'Use the chatbot on the next page to tell us about your organization or idea, and we will match you with helpful resources — including template legal documents, similar organizations, and more.' },
+  { type: 'body',     text: 'After you have your resources, you can log in to connect with other organizations on the platform.' },
+  { type: 'body',     text: 'When your project is ready, you can leave behind your legal documents and other information for the benefit of future change-makers.' },
 ]
 
-const INITIAL_MESSAGE: Message = {
-  role: 'assistant',
-  content: "Tell me about the organization you're building or trying to start — what's your mission, and what kind of help are you looking for?",
-}
-
-export default function Home() {
-  const [messages, setMessages] = useState<Message[]>([INITIAL_MESSAGE])
-  const [input, setInput] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [matchUrl, setMatchUrl] = useState<string | null>(null)
-  const chatRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (chatRef.current) {
-      chatRef.current.scrollTop = chatRef.current.scrollHeight
-    }
-  }, [messages, loading])
-
-  async function sendMessage() {
-    if (!input.trim() || loading || matchUrl) return
-
-    const newMessages: Message[] = [
-      ...messages,
-      { role: 'user', content: input },
-    ]
-    setMessages(newMessages)
-    setInput('')
-    setLoading(true)
-
-    // Exclude the pre-seeded greeting from the API payload
-    const apiMessages = newMessages.filter(m => !(m.role === 'assistant' && m === INITIAL_MESSAGE))
-
-    try {
-      const res = await fetch('/api/intake', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: apiMessages }),
-      })
-
-      const data = await res.json()
-
-      if (data.error) {
-        setMessages([...newMessages, { role: 'assistant', content: `Something went wrong: ${data.error}` }])
-        return
-      }
-
-      const finalMessages = [...newMessages, { role: 'assistant' as const, content: data.message }]
-      setMessages(finalMessages)
-
-      if (data.profile) {
-        const params = new URLSearchParams()
-        params.set('q', data.profile.search_query)
-        params.set('profile', JSON.stringify(data.profile))
-        // Save chat history so results page can show it
-        sessionStorage.setItem('chatMessages', JSON.stringify(finalMessages))
-        setMatchUrl(`/results?${params.toString()}`)
-      }
-    } catch (err) {
-      console.error(err)
-    } finally {
-      setLoading(false)
-    }
-  }
-
+export default function IntroPage() {
   return (
     <>
-      <Nav />
+      <style>{`
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(18px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
 
-      <main className="home">
-        <div className="home-intro">
-          <p className="kicker">St. Louis Cooperative Resource Network</p>
-          <h1 className="hero-title">
-            Building <em>better</em><br />
-            organizations,<br />
-            together.
-          </h1>
-          <ol className="hero-steps">
-            <li><span className="hero-step-num">1</span>Tell us about your organization using the chatbot below.</li>
-            <li><span className="hero-step-num">2</span>Get matched with resources from organizations with missions similar to yours.</li>
-            <li><span className="hero-step-num">3</span>Connect with partners, funders, and models across Missouri and Illinois.</li>
-          </ol>
-        </div>
+        .intro-wrap {
+          min-height: 100vh;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          background: var(--cream);
+          padding: 3rem 1.5rem 4rem;
+        }
 
-        <div className="home-chat">
-          {!matchUrl && (
-            <div className="chips">
-              {CHIPS.map(chip => (
-                <button
-                  key={chip}
-                  className="chip"
-                  onClick={() => setInput(chip)}
-                >
-                  {chip}
-                </button>
-              ))}
-            </div>
-          )}
+        .intro-inner {
+          max-width: 580px;
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          gap: 1.5rem;
+        }
 
-          <div className="chat-window" ref={chatRef}>
-            {messages.map((m, i) => (
-              <div key={i} className="chat-msg">
-                <span className={`chat-msg-label ${m.role === 'user' ? 'user' : 'ai'}`}>
-                  {m.role === 'user' ? 'You' : 'Prosocial'}
-                </span>
-                <p className="chat-msg-text">{m.content}</p>
-              </div>
-            ))}
-            {loading && (
-              <div className="chat-msg">
-                <span className="chat-msg-label ai">Prosocial</span>
-                <p className="chat-msg-text chat-typing">···</p>
-              </div>
-            )}
-          </div>
+        .intro-title {
+          font-family: 'Playfair Display', Georgia, serif;
+          font-size: clamp(2rem, 5vw, 3rem);
+          font-weight: 700;
+          color: var(--ink);
+          line-height: 1.15;
+          margin: 0;
+          opacity: 0;
+          animation: fadeUp 0.7s ease forwards;
+          animation-delay: 0.1s;
+        }
 
-          {matchUrl ? (
-            <div className="match-ready">
-              <p className="match-ready-label">Your matches are ready</p>
-              <Link href={matchUrl} className="match-ready-btn">
-                View similar organizations →
-              </Link>
-            </div>
-          ) : (
-            <div className="chat-input-row">
-              <input
-                className="chat-input"
-                type="text"
-                placeholder="Continue the conversation…"
-                value={input}
-                onChange={e => setInput(e.target.value)}
-                onKeyDown={e => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault()
-                    sendMessage()
-                  }
-                }}
-                disabled={loading}
-              />
-              <button
-                className="chat-send"
-                onClick={sendMessage}
-                disabled={loading}
-              >
-                {loading ? '…' : 'Send'}
-              </button>
-            </div>
-          )}
-        </div>
-      </main>
+        .intro-subtitle {
+          font-family: 'Playfair Display', Georgia, serif;
+          font-size: clamp(1rem, 2.5vw, 1.25rem);
+          font-weight: 400;
+          font-style: italic;
+          color: var(--muted);
+          margin: 0;
+          opacity: 0;
+          animation: fadeUp 0.7s ease forwards;
+          animation-delay: 0.45s;
+        }
 
-      <div className="home-below">
-        <div className="stat-strip">
-          <div className="stat">
-            <div className="stat-n">400+</div>
-            <div className="stat-l">Local Orgs</div>
-          </div>
-          <div className="stat">
-            <div className="stat-n">MO &amp; IL</div>
-            <div className="stat-l">Coverage</div>
-          </div>
-          <div className="stat">
-            <div className="stat-n">Free</div>
-            <div className="stat-l">Always</div>
-          </div>
+        .intro-divider {
+          width: 48px;
+          height: 2px;
+          background: var(--red);
+          border: none;
+          margin: 0;
+          opacity: 0;
+          animation: fadeUp 0.6s ease forwards;
+          animation-delay: 0.75s;
+        }
+
+        .intro-body {
+          font-size: 1rem;
+          line-height: 1.75;
+          color: var(--ink);
+          margin: 0;
+          opacity: 0;
+          animation: fadeUp 0.7s ease forwards;
+        }
+
+        .intro-body:nth-of-type(1) { animation-delay: 1.0s; }
+        .intro-body:nth-of-type(2) { animation-delay: 1.3s; }
+        .intro-body:nth-of-type(3) { animation-delay: 1.6s; }
+
+        .intro-btn {
+          display: inline-block;
+          align-self: flex-start;
+          margin-top: 0.5rem;
+          padding: 0.75rem 2rem;
+          background: var(--ink);
+          color: var(--cream);
+          font-size: 0.95rem;
+          font-weight: 600;
+          letter-spacing: 0.03em;
+          border-radius: 3px;
+          text-decoration: none;
+          transition: background 0.2s ease, transform 0.15s ease;
+          opacity: 0;
+          animation: fadeUp 0.7s ease forwards;
+          animation-delay: 1.9s;
+        }
+
+        .intro-btn:hover {
+          background: var(--red);
+          transform: translateY(-1px);
+        }
+      `}</style>
+
+      <div className="intro-wrap">
+        <div className="intro-inner">
+          <h1 className="intro-title">{lines[0].text}</h1>
+          <p className="intro-subtitle">{lines[1].text}</p>
+          <hr className="intro-divider" />
+          <p className="intro-body">{lines[2].text}</p>
+          <p className="intro-body">{lines[3].text}</p>
+          <p className="intro-body">{lines[4].text}</p>
+          <Link href="/home" className="intro-btn">
+            Continue →
+          </Link>
         </div>
       </div>
-
-      <section className="how">
-        <div className="how-step">
-          <span className="step-num">01</span>
-          <h3>Describe your situation</h3>
-          <p>Tell us about your organization, your goals, and the challenges you&apos;re facing — in plain language, no legal jargon required.</p>
-        </div>
-        <div className="how-step">
-          <span className="step-num">02</span>
-          <h3>Get matched instantly</h3>
-          <p>Our AI finds similar organizations, relevant documents, and resources from across the St. Louis region that fit your specific context.</p>
-        </div>
-        <div className="how-step">
-          <span className="step-num">03</span>
-          <h3>Pay it forward</h3>
-          <p>Leave your knowledge behind — upload your bylaws, share what worked — so the next organization benefits from your experience.</p>
-        </div>
-      </section>
-
-      <footer className="site-footer">
-        <p className="footer-disclaimer">
-          Nothing on this site constitutes legal advice. Content is provided for informational purposes only.
-          All parties should consult a licensed attorney before taking any significant steps, including signing paperwork or forming a legal entity.
-          For low-cost legal assistance, contact the{' '}
-          <a href="https://law.washu.edu/academics/clinical-programs/entrepreneurship-clinic/" target="_blank" rel="noopener noreferrer">
-            WashU Entrepreneurship &amp; Nonprofit Law Clinic
-          </a>.
-        </p>
-      </footer>
     </>
   )
 }
